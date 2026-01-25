@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WolfCore Liberty Broker — Plataforma de Trading</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- TradingView Widget -->
+  <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0b1a3a">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="apple-touch-icon" href="logo-wolfcore.jpg">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #0a0a0a;
+      color: #ffffff;
+      font-family: 'Montserrat', sans-serif;
+      overflow: hidden;
+      height: 100vh;
+    }
+
+    .header {
+      background: rgba(10, 10, 10, 0.95);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #1e3a5f;
+      z-index: 10;
+      position: relative;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .logo {
+      width: 40px;
+      height: 40px;
+    }
+
+    .controls {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .instrument-selector {
+      padding: 0.5rem;
+      background: rgba(15, 15, 25, 0.7);
+      border: 1px solid #1e3a5f;
+      color: white;
+      border-radius: 4px;
+      font-family: 'Montserrat', sans-serif;
+      min-width: 150px;
+    }
+
+    .timeframe-buttons {
+      display: flex;
+      gap: 0.3rem;
+    }
+
+    .timeframe-btn {
+      padding: 0.3rem 0.6rem;
+      background: rgba(15, 15, 25, 0.7);
+      border: 1px solid #1e3a5f;
+      color: #cbd5e1;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      min-width: 35px;
+      text-align: center;
+    }
+
+    .timeframe-btn.active {
+      background: #0b1a3a;
+      color: white;
+    }
+
+    .chart-container {
+      height: calc(100vh - 80px);
+      width: 100%;
+      background: #0a0a0a;
+      position: relative;
+    }
+
+    .back-link {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: rgba(11, 26, 58, 0.7);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      text-decoration: none;
+      z-index: 100;
+      border: 1px solid #1e3a5f;
+    }
+
+    @media (max-width: 768px) {
+      .header {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem;
+      }
+      
+      .controls {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      
+      .timeframe-buttons {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a href="index.html" class="back-link">← Volver a Inicio</a>
+  
+  <div class="header">
+    <div class="logo-container">
+      <img src="logo-wolfcore.jpg" alt="WolfCore Liberty" class="logo">
+      <h2 style="font-size: 1.2rem; font-weight: 600;">WolfCore Liberty Broker</h2>
+    </div>
+    
+    <div class="controls">
+      <select id="instrument" class="instrument-selector">
+        <optgroup label="Forex">
+          <option value="FX:EURUSD">EUR/USD</option>
+          <option value="FX:GBPUSD">GBP/USD</option>
+          <option value="FX:USDJPY">USD/JPY</option>
+          <option value="FX:AUDUSD">AUD/USD</option>
+          <option value="FX:USDCAD">USD/CAD</option>
+        </optgroup>
+        <optgroup label="Criptomonedas">
+          <option value="BINANCE:BTCUSDT">BTC/USD</option>
+          <option value="BINANCE:ETHUSDT">ETH/USD</option>
+          <option value="BINANCE:XRPUSDT">XRP/USD</option>
+          <option value="BINANCE:SOLUSDT">SOL/USD</option>
+        </optgroup>
+        <optgroup label="Índices">
+          <option value="INDEX:SPX">US500</option>
+          <option value="INDEX:IXIC">NAS100</option>
+          <option value="INDEX:DAX">GER40</option>
+        </optgroup>
+        <optgroup label="Commodities">
+          <option value="OANDA:XAUUSD">XAU/USD</option>
+          <option value="OANDA:WTICOUSD">OIL</option>
+          <option value="OANDA:NGOUSD">NGAS</option>
+        </optgroup>
+      </select>
+      
+      <div class="timeframe-buttons">
+        <button class="timeframe-btn active" data-time="1">1m</button>
+        <button class="timeframe-btn" data-time="5">5m</button>
+        <button class="timeframe-btn" data-time="15">15m</button>
+        <button class="timeframe-btn" data-time="60">1h</button>
+        <button class="timeframe-btn" data-time="240">4h</button>
+        <button class="timeframe-btn" data-time="1440">1d</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="chart-container" id="chart">
+    <div id="tradingview_widget"></div>
+  </div>
+
+  <script>
+    // AUTENTICACIÓN
+    if (!sessionStorage.getItem('wolfcore_user')) {
+      alert("❌ Acceso denegado. Inicia sesión primero.");
+      window.location.href = "login.html";
+    }
+
+    // Estado
+    let currentInstrument = 'BINANCE:BTCUSDT';
+    let currentTimeframe = '1';
+
+    // Inicializar TradingView
+    function initChart() {
+      new TradingView.widget({
+        autosize: true,
+        symbol: currentInstrument,
+        interval: currentTimeframe,
+        timezone: "America/New_York",
+        theme: "dark",
+        locale: "es",
+        toolbar_bg: "#0a0a0a",
+        enable_publishing: false,
+        hide_side_toolbar: false,
+        allow_symbol_change: true,
+        container_id: "tradingview_widget",
+        width: "100%",
+        height: "100%",
+        save_image: false,
+        hideideas: true,
+        hide_top_toolbar: false,
+        hide_logo: false,
+        hide_legend: false,
+        overrides: {
+          "paneProperties.background": "#0a0a0a",
+          "paneProperties.vertGridProperties.color": "#1e3a5f",
+          "paneProperties.horzGridProperties.color": "#1e3a5f",
+          "scalesProperties.textColor": "#cbd5e1",
+          "scalesProperties.lineColor": "#1e3a5f",
+          "mainSeriesProperties.candleStyle.upColor": "#16a34a",
+          "mainSeriesProperties.candleStyle.downColor": "#dc2626",
+          "mainSeriesProperties.candleStyle.borderUpColor": "#16a34a",
+          "mainSeriesProperties.candleStyle.borderDownColor": "#dc2626",
+          "mainSeriesProperties.candleStyle.wickUpColor": "#16a34a",
+          "mainSeriesProperties.candleStyle.wickDownColor": "#dc2626"
+        },
+        studies: [],
+        custom_css_url: ""
+      });
+    }
+
+    // Cambiar instrumento
+    document.getElementById('instrument').addEventListener('change', function() {
+      currentInstrument = this.value;
+      const widget = document.getElementById('tradingview_widget');
+      if (widget) {
+        widget.innerHTML = '';
+        initChart();
+      }
+    });
+
+    // Cambiar timeframe
+    document.querySelectorAll('.timeframe-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.timeframe-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        currentTimeframe = this.getAttribute('data-time');
+        
+        const widget = document.getElementById('tradingview_widget');
+        if (widget) {
+          widget.innerHTML = '';
+          initChart();
+        }
+      });
+    });
+
+    // Iniciar cuando cargue la página
+    window.addEventListener('load', initChart);
+  </script>
+
+</body>
+</html>

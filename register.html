@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WolfCore Liberty — Registro de Miembros</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(135deg, #0a0a0a 0%, #0b1a3a 100%);
+      color: #ffffff;
+      font-family: 'Montserrat', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    .register-container {
+      background: rgba(15, 15, 25, 0.8);
+      border-radius: 20px;
+      padding: 2.5rem;
+      width: 90%;
+      max-width: 500px;
+      border: 1px solid #1e3a5f;
+      box-shadow: 0 20px 50px rgba(11, 26, 58, 0.5);
+      text-align: center;
+    }
+
+    .logo-container {
+      margin-bottom: 2rem;
+    }
+
+    .logo {
+      width: 100px;
+      height: 100px;
+      border-radius: 8px;
+      border: 2px solid #1e3a5f;
+      background: rgba(11, 26, 58, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      overflow: hidden;
+    }
+
+    .logo img {
+      width: 80%;
+      height: 80%;
+      object-fit: contain;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(to right, #ffffff, #a0b0d0);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .subtitle {
+      color: #cbd5e1;
+      margin-bottom: 2rem;
+      font-size: 0.95rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #cbd5e1;
+      font-size: 0.9rem;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 0.8rem;
+      background: rgba(10, 10, 20, 0.7);
+      border: 1px solid #1e3a5f;
+      border-radius: 8px;
+      color: white;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    .register-btn {
+      width: 100%;
+      padding: 0.9rem;
+      background: #0b1a3a;
+      color: white;
+      border: 1px solid #1e3a5f;
+      border-radius: 8px;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 600;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .register-btn:hover {
+      background: #1a2a4a;
+      transform: translateY(-2px);
+    }
+
+    .login-link {
+      margin-top: 1.5rem;
+      display: block;
+      color: #4ade80;
+      text-decoration: none;
+    }
+
+    footer {
+      position: absolute;
+      bottom: 20px;
+      text-align: center;
+      width: 100%;
+      color: #cbd5e1;
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="register-container">
+    <div class="logo-container">
+      <div class="logo">
+        <img src="logo-wolfcore.jpg" alt="WolfCore Liberty Logo">
+      </div>
+    </div>
+    
+    <h1>Registro de Miembros</h1>
+    <p class="subtitle">WolfCore Liberty — Institución Privada del Lobo</p>
+    
+    <form id="registerForm">
+      <div class="form-group">
+        <label for="fullName">Nombre Completo</label>
+        <input type="text" id="fullName" placeholder="ej: Juan Pérez" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="email">Email Profesional</label>
+        <input type="email" id="email" placeholder="ej: juan@empresa.com" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="phone">Teléfono (WhatsApp)</label>
+        <input type="tel" id="phone" placeholder="ej: +54 9 11 1234-5678" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="experience">Experiencia en Trading</label>
+        <select id="experience" required>
+          <option value="">Selecciona tu nivel</option>
+          <option value="beginner">Principiante (0-6 meses)</option>
+          <option value="intermediate">Intermedio (6-24 meses)</option>
+          <option value="advanced">Avanzado (2+ años)</option>
+          <option value="professional">Profesional</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label for="motivation">¿Por qué quieres unirte a WolfCore?</label>
+        <textarea id="motivation" rows="3" placeholder="Describe tu motivación y objetivos..." required></textarea>
+      </div>
+      
+      <button type="submit" class="register-btn">Crear Cuenta y Acceder</button>
+    </form>
+    
+    <a href="index.html" class="login-link">← Volver al acceso</a>
+  </div>
+
+  <footer>
+    © 2026 WolfCore Liberty — Institución Privada del Lobo
+  </footer>
+
+  <!-- EmailJS -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  
+  <!-- Firebase App (modular CDN) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD1iqERPDahAc_OtXYnrYJvt6cbwNpu9UE",
+      authDomain: "wolfcore-libertyversion1.firebaseapp.com",
+      projectId: "wolfcore-libertyversion1",
+      storageBucket: "wolfcore-libertyversion1.firebasestorage.app",
+      messagingSenderId: "784073773217",
+      appId: "1:784073773217:web:26a4cf04d79a14fbf0e0e0"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    console.log("✅ Firebase inicializado");
+
+    const EMAILJS_PUBLIC_KEY = "6EBT7x4WdOSG96_XD";
+    emailjs.init(EMAILJS_PUBLIC_KEY);
+
+    function generateRandomPassword() {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%';
+      let password = '';
+      for (let i = 0; i < 12; i++) {
+        password += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return password;
+    }
+
+    document.getElementById('registerForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const fullName = document.getElementById('fullName').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const experience = document.getElementById('experience').value;
+      const motivation = document.getElementById('motivation').value.trim();
+      
+      if (!fullName || !email || !phone || !experience || !motivation) {
+        alert('❌ Completa todos los campos.');
+        return;
+      }
+      
+      try {
+        const button = document.querySelector('.register-btn');
+        button.textContent = 'Procesando...';
+        button.disabled = true;
+        
+        const username = email.split('@')[0].toLowerCase().replace(/\./g, '_');
+        const password = generateRandomPassword();
+        
+        // Guardar en Firestore
+        await addDoc(collection(db, 'users'), {
+          username: username,
+          fullName: fullName,
+          email: email,
+          phone: phone,
+          experience: experience,
+          motivation: motivation,
+          role: 'Miembro',
+          level: 'TRADER',
+          password: password,
+          active: true,
+          createdAt: serverTimestamp()
+        });
+
+        // Guardar en localStorage para login persistente
+        let users = JSON.parse(localStorage.getItem('wolfcore_users')) || {};
+        users[username] = {
+          password: password,
+          name: fullName,
+          role: 'Miembro',
+          level: 'TRADER'
+        };
+        localStorage.setItem('wolfcore_users', JSON.stringify(users));
+
+        // ENLACE CORRECTO A TU DOMINIO REAL
+        const loginUrl = 'https://wolfcore771-lb.github.io/wolfcore-liberty-version-1.0/login.html';
+        
+        // Enviar email de bienvenida
+        try {
+          await emailjs.send("service_wolf6oo", "wolfcore_liberty", {
+            to_email: email,
+            user_name: fullName,
+            username: username,
+            password: password,
+            login_link: loginUrl
+          });
+        } catch (emailError) {
+          console.warn('Email falló, pero cuenta creada');
+        }
+        
+        button.textContent = 'Crear Cuenta y Acceder';
+        button.disabled = false;
+        
+        alert(`✅ ¡Cuenta creada!\n\nUsuario: ${username}\nContraseña: ${password}`);
+        window.location.href = 'login.html';
+        
+      } catch (error) {
+        console.error('Error:', error);
+        const button = document.querySelector('.register-btn');
+        button.textContent = 'Crear Cuenta y Acceder';
+        button.disabled = false;
+        alert('❌ Error al crear cuenta. Intenta nuevamente.');
+      }
+    });
+  </script>
+
+</body>
+</html>

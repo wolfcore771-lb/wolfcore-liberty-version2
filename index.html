@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WolfCore Liberty — Donde el futuro es hoy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0b1a3a">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="apple-touch-icon" href="logo-wolfcore.jpg">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(135deg, #0a0a0a 0%, #0b1a3a 100%);
+      color: #ffffff;
+      font-family: 'Montserrat', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    .access-container {
+      background: rgba(15, 15, 25, 0.8);
+      border-radius: 20px;
+      padding: 3rem;
+      width: 90%;
+      max-width: 600px;
+      border: 1px solid #1e3a5f;
+      box-shadow: 0 20px 50px rgba(11, 26, 58, 0.5);
+      text-align: center;
+    }
+
+    .logo-container {
+      margin-bottom: 2.5rem;
+    }
+
+    .logo-large {
+      width: 180px;
+      height: auto;
+      border-radius: 12px;
+      border: 2px solid #1e3a5f;
+      background: rgba(11, 26, 58, 0.4);
+      padding: 15px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 1.5rem;
+      background: linear-gradient(to right, #ffffff, #c0d0ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .description {
+      color: #cbd5e1;
+      line-height: 1.7;
+      margin-bottom: 2.5rem;
+      font-size: 1.15rem;
+    }
+
+    .access-section {
+      background: rgba(11, 26, 58, 0.3);
+      padding: 2rem;
+      border-radius: 16px;
+      border: 1px solid #1e3a5f;
+    }
+
+    .access-section h2 {
+      margin-bottom: 1.5rem;
+      color: #4ade80;
+      font-size: 1.4rem;
+    }
+
+    .access-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .access-btn {
+      display: inline-block;
+      padding: 0.9rem 2rem;
+      background: #0b1a3a;
+      color: white;
+      border-radius: 32px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      border: 1px solid #1e3a5f;
+      font-size: 1.1rem;
+      text-align: center;
+    }
+
+    .access-btn:hover {
+      background: #1a2a4a;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(11, 26, 58, 0.5);
+    }
+
+    .register-btn {
+      background: #16a34a;
+    }
+
+    .register-btn:hover {
+      background: #10b981;
+    }
+
+    footer {
+      position: absolute;
+      bottom: 20px;
+      text-align: center;
+      width: 100%;
+      color: #cbd5e1;
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="access-container">
+    <div class="logo-container">
+      <img src="logo-wolfcore.jpg" alt="WolfCore Liberty Logo" class="logo-large">
+    </div>
+    
+    <h1>Bienvenidos a WolfCore Liberty</h1>
+    
+    <p class="description">
+      Donde el futuro es hoy. Una institución privada del lobo, diseñada para cada comerciante en los mercados financieros, 
+      donde te unirás a esta gran familia Wolf para que puedas llevar tu vida al siguiente nivel y así gozar de la libertad 
+      que los mercados, junto a esta institución, puedan darte.
+    </p>
+    
+    <div class="access-section">
+      <h2>Acceso a WolfCore Liberty</h2>
+      <p style="color: #cbd5e1; margin-bottom: 1.5rem;">
+        Elige cómo deseas acceder a la institución privada del lobo.
+      </p>
+      <div class="access-buttons">
+        <a href="register.html" class="access-btn register-btn">¿Eres nuevo/a? ¡Regístrate ahora!</a>
+        <a href="login.html" class="access-btn">¿Ya eres parte de WolfCore? ¡Haz clic aquí!</a>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    © 2026 WolfCore Liberty — Institución Privada del Lobo
+  </footer>
+
+  <!-- Verificar autenticación y redirigir si ya está logueado -->
+  <script>
+    // Si ya está autenticado, redirigir a la plataforma
+    if (sessionStorage.getItem('wolfcore_user')) {
+      window.location.href = 'platform.html';
+    }
+  </script>
+
+</body>
+</html>
