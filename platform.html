@@ -3,402 +3,62 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>WolfCore Liberty — Plataforma de Miembros</title>
+  <title>WolfCore Liberty — Plataforma</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#0b1a3a">
-  <meta name="mobile-web-app-capable" content="yes">
-  <link rel="apple-touch-icon" href="logo-wolfcore.jpg">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      background-color: #0a0a0a;
-      color: #ffffff;
-      font-family: 'Montserrat', sans-serif;
-      overflow-x: hidden;
-      position: relative;
-    }
-
-    /* Línea diagonal sutil */
-    body::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: linear-gradient(
-        to top right,
-        transparent 49.5%,
-        #0b1a3a 50%,
-        #0b1a3a 50.5%,
-        transparent 51%
-      );
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    header {
-      background: rgba(10, 10, 10, 0.95);
-      padding: 1rem 2rem;
-      position: fixed;
-      top: 0;
-      width: 100%;
-      z-index: 100;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border-bottom: 1px solid #1e3a5f;
-    }
-
-    header nav ul {
-      display: flex;
-      list-style: none;
-      gap: 2rem;
-      margin: 0;
-      padding: 0;
-    }
-
-    nav a {
-      color: #cbd5e1;
-      text-decoration: none;
-      font-weight: 500;
-      transition: color 0.3s ease;
-      white-space: nowrap;
-    }
-
-    nav a:hover {
-      color: #ffffff;
-    }
-
-    main {
-      padding: 100px 2rem 4rem;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      position: relative;
-      z-index: 1;
-    }
-
-    .hero {
-      max-width: 850px;
-      margin-bottom: 3rem;
-    }
-
-    .logo-large-container {
-      margin-bottom: 2.5rem;
-      display: flex;
-      justify-content: center;
-    }
-
-    .logo-large {
-      width: 180px;
-      height: auto;
-      border-radius: 10px;
-      box-shadow: 0 6px 25px rgba(11, 26, 58, 0.6);
-      border: 2px solid #1e3a5f;
-      background: rgba(15, 15, 25, 0.4);
-      padding: 10px;
-    }
-
-    .hero h1 {
-      font-size: 2.9rem;
-      font-weight: 700;
-      letter-spacing: 1px;
-      margin-bottom: 1.4rem;
-      background: linear-gradient(to right, #ffffff, #c0d0ff);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-
-    .hero p {
-      font-size: 1.35rem;
-      color: #cbd5e1;
-      line-height: 1.65;
-      margin-bottom: 2.2rem;
-    }
-
-    .cta-button {
-      display: inline-block;
-      padding: 0.9rem 2.2rem;
-      background: #0b1a3a;
-      color: white;
-      border-radius: 32px;
-      text-decoration: none;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      border: 1px solid #1e3a5f;
-      font-size: 1.1rem;
-      margin: 0.5rem;
-    }
-
-    .cta-button:hover {
-      background: #1a2a4a;
-      transform: translateY(-3px);
-      box-shadow: 0 4px 15px rgba(11, 26, 58, 0.5);
-    }
-
-    section {
-      padding: 4.5rem 2rem;
-      max-width: 1200px;
-      margin: 0 auto;
-      text-align: center;
-    }
-
-    section h2 {
-      font-size: 2.3rem;
-      margin-bottom: 1.6rem;
-      color: #ffffff;
-    }
-
-    section p {
-      font-size: 1.15rem;
-      color: #cbd5e1;
-      max-width: 800px;
-      margin: 0 auto 2.2rem;
-      line-height: 1.6;
-    }
-
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 2.2rem;
-      margin-top: 2rem;
-    }
-
-    .feature-card {
-      background: rgba(15, 15, 25, 0.5);
-      padding: 2.2rem;
-      border-radius: 14px;
-      border: 1px solid #1e3a5f;
-      transition: transform 0.3s ease, background 0.3s ease;
-    }
-
-    .feature-card:hover {
-      transform: translateY(-6px);
-      background: rgba(25, 30, 50, 0.45);
-    }
-
-    .feature-card h3 {
-      font-size: 1.45rem;
-      margin-bottom: 1rem;
-      color: #ffffff;
-    }
-
-    footer {
-      background: rgba(10, 10, 10, 0.98);
-      padding: 2.5rem;
-      text-align: center;
-      border-top: 1px solid #1e3a5f;
-      margin-top: 4rem;
-      font-size: 1.05rem;
-      line-height: 1.6;
-    }
-
-    @media (max-width: 768px) {
-      header {
-        padding: 1rem;
-      }
-
-      header nav ul {
-        gap: 1.2rem;
-        flex-wrap: wrap;
-        justify-content: center;
-      }
-
-      .hero h1 {
-        font-size: 2.2rem;
-      }
-
-      .hero p {
-        font-size: 1.15rem;
-      }
-
-      .logo-large {
-        width: 140px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .hero h1 {
-        font-size: 1.9rem;
-      }
-
-      .hero p {
-        font-size: 1.05rem;
-        padding: 0 10px;
-      }
-
-      .logo-large {
-        width: 120px;
-      }
-
-      header nav ul {
-        gap: 0.8rem;
-      }
-      
-      .cta-button {
-        display: block;
-        margin: 0.5rem auto;
-      }
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0a0a0a; color: #fff; font-family: 'Montserrat', sans-serif; }
+    header { background: rgba(10,10,10,0.95); padding: 1rem 2rem; position: fixed; top: 0; width: 100%; z-index: 100; border-bottom: 1px solid #1e3a5f; }
+    nav ul { display: flex; list-style: none; gap: 2rem; margin: 0; padding: 0; }
+    nav a { color: #cbd5e1; text-decoration: none; font-weight: 500; }
+    main { padding: 100px 2rem 4rem; min-height: 100vh; }
+    .hero { text-align: center; max-width: 800px; margin: 0 auto; }
+    .logo-large { width: 180px; margin: 0 auto 2rem; border-radius: 10px; border: 2px solid #1e3a5f; background: rgba(15,15,25,0.4); padding: 10px; }
+    h1 { font-size: 2.5rem; background: linear-gradient(to right, #ffffff, #c0d0ff); -webkit-background-clip: text; background-clip: text; color: transparent; margin-bottom: 1rem; }
+    footer { background: rgba(10,10,10,0.98); padding: 2rem; text-align: center; margin-top: 4rem; font-size: 0.9rem; }
   </style>
 </head>
 <body>
-
-  <!-- Menú superior fijo -->
   <header>
     <nav>
       <ul id="mainNav">
         <li><a href="#formaciones">Formaciones</a></li>
-        <li><a href="broker.html">Broker Personal</a></li>
-        <li><a href="#soporte">Soporte 24/7</a></li>
-        <li><a href="#guia">Guía Rápida</a></li>
-        <li><a href="#billetera">Billetera Virtual</a></li>
-        <!-- Panel CEO se agregará dinámicamente si es CEO -->
+        <li><a href="broker.html">Broker</a></li>
+        <li><a href="#soporte">Soporte</a></li>
       </ul>
     </nav>
   </header>
 
-  <!-- Sección principal -->
   <main>
     <div class="hero">
-      <div class="logo-large-container">
-        <img src="logo-wolfcore.jpg" alt="WolfCore Liberty - Logo Institucional" class="logo-large">
-      </div>
-
-      <h1>Bienvenidos a WolfCore Liberty</h1>
-      <p>
-        Donde el futuro es hoy. Una institución privada del lobo, diseñada para cada comerciante en los mercados financieros, 
-        donde te unirás a esta gran familia Wolf para que puedas llevar tu vida al siguiente nivel y así gozar de la libertad 
-        que los mercados, junto a esta institución, puedan darte.
-      </p>
-      <a href="broker.html" class="cta-button">Abrir Plataforma de Trading</a>
+      <img src="logo-wolfcore.jpg" alt="Logo" class="logo-large">
+      <h1>Bienvenido a WolfCore Liberty</h1>
+      <p id="welcomeMessage">Cargando...</p>
     </div>
   </main>
 
-  <!-- Sección: Formaciones -->
-  <section id="formaciones">
-    <h2>🎓 Formaciones Exclusivas</h2>
-    <p>Aprende desde cero o perfecciona tu estrategia con cursos online y talleres en vivo, diseñados por traders profesionales.</p>
-    <div class="features-grid">
-      <div class="feature-card">
-        <h3>Online On-Demand</h3>
-        <p>Accede a contenido grabado y certificaciones cuando tú quieras.</p>
-      </div>
-      <div class="feature-card">
-        <h3>Talleres en Vivo</h3>
-        <p>Sesiones semanales con análisis en tiempo real y Q&A exclusivo.</p>
-      </div>
-      <div class="feature-card">
-        <h3>Mentorías Privadas</h3>
-        <p>Coaching personalizado para acelerar tu crecimiento.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Sección: Soporte 24/7 -->
-  <section id="soporte">
-    <h2>🛠️ Soporte 24/7</h2>
-    <p>Equipo humano disponible las 24 horas, 7 días a la semana, para resolver cualquier duda técnica o operativa.</p>
-    <div class="features-grid">
-      <div class="feature-card">
-        <h3>Chat en Vivo</h3>
-        <p>Resolvemos tus dudas en menos de 2 minutos.</p>
-      </div>
-      <div class="feature-card">
-        <h3>Base de Conocimiento</h3>
-        <p>Artículos, tutoriales y FAQs actualizados diariamente.</p>
-      </div>
-      <div class="feature-card">
-        <h3>Atención Prioritaria</h3>
-        <p>Para usuarios premium y miembros de la comunidad.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Sección: Guía Rápida -->
-  <section id="guia">
-    <h2>🧭 Guía Rápida para Comenzar</h2>
-    <p>En 3 pasos simples, estarás operando dentro de WolfCore Liberty.</p>
-    <div class="features-grid">
-      <div class="feature-card">
-        <h3>1. Regístrate</h3>
-        <p>Crea tu cuenta en menos de 2 minutos.</p>
-      </div>
-      <div class="feature-card">
-        <h3>2. Deposita</h3>
-        <p>Usa ARS, USD o cripto — sin comisiones ocultas.</p>
-      </div>
-      <div class="feature-card">
-        <h3>3. Opera</h3>
-        <p>Empieza a operar con tu broker personal integrado.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Sección: Billetera Virtual -->
-  <section id="billetera">
-    <h2>💰 Billetera Virtual Segura</h2>
-    <p>Administra tu capital con total libertad: depósitos, transferencias entre usuarios y retiros instantáneos.</p>
-    <div class="features-grid">
-      <div class="feature-card">
-        <h3>Transferencias Internas</h3>
-        <p>Envía fondos a otros usuarios de la plataforma en segundos.</p>
-      </div>
-      <div class="feature-card">
-        <h3>Retiros Multimoneda</h3>
-        <p>ARS, USD, BTC, ETH — retira cuando quieras, sin límites.</p>
-      </div>
-      <div class="feature-card">
-        <h3>Seguridad de Nivel Bancario</h3>
-        <p>Cifrado end-to-end, autenticación de dos factores y auditorías mensuales.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Pie de página institucional -->
   <footer>
-    <p>&copy; 2026 WolfCore Liberty — Institución Privada del Lobo. Todos los derechos reservados.</p>
-    <p>Diseñado y dirigido por Marcos Fernández "El Lobo", Director Fundador de WolfCore Liberty.</p>
-    <p>Donde el futuro es hoy.</p>
+    © 2026 WolfCore Liberty — Institución Privada del Lobo<br>
+    Diseñado por Marcos Fernández "El Lobo", Director Fundador.
   </footer>
 
-  <!-- AUTENTICACIÓN Y GESTIÓN DE MENÚ -->
   <script>
-    // Verificar autenticación
-    const userData = localStorage.getItem('wolfcore_user');
-    
-    if (!userData) {
-      alert("❌ Sesión expirada. Por favor inicia sesión.");
+    const user = JSON.parse(localStorage.getItem('wolfcore_user'));
+    if (!user) {
+      alert("❌ Sesión expirada. Inicia sesión.");
       window.location.href = "login.html";
     }
 
-    const user = JSON.parse(userData);
-    console.log("Usuario autenticado:", user.name);
-    
-    // Mostrar nombre del usuario en la consola
-    console.log("Bienvenido, " + user.name + " (" + user.role + ")");
-    
-    // Mostrar enlace al Panel CEO si es el Director
+    document.getElementById('welcomeMessage').textContent = 
+      `Bienvenido, ${user.name} (${user.role})`;
+
+    // Mostrar Panel CEO si es el Director
     if (user.level === 'CEO') {
       const nav = document.getElementById('mainNav');
-      if (nav && !nav.querySelector('li a[href="admin.html"]')) {
-        const ceoLink = document.createElement('li');
-        ceoLink.innerHTML = '<a href="admin.html">Panel CEO</a>';
-        nav.appendChild(ceoLink);
-      }
+      const ceoLink = document.createElement('li');
+      ceoLink.innerHTML = '<a href="admin.html">Panel CEO</a>';
+      nav.appendChild(ceoLink);
     }
   </script>
-
 </body>
 </html>
