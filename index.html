@@ -5,11 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>WolfCore Liberty — Donde el futuro es hoy</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <!-- PWA Manifest -->
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#0b1a3a">
-  <meta name="mobile-web-app-capable" content="yes">
-  <link rel="apple-touch-icon" href="logo-wolfcore.jpg">
   <style>
     * {
       margin: 0;
@@ -98,7 +93,7 @@
       font-weight: 600;
       transition: all 0.3s ease;
       border: 1px solid #1e3a5f;
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       text-align: center;
     }
 
@@ -148,7 +143,7 @@
       </p>
       <div class="access-buttons">
         <a href="register.html" class="access-btn register-btn">¿Eres nuevo/a? ¡Regístrate ahora!</a>
-        <a href="login.html" class="access-btn">¿Ya eres parte de WolfCore? ¡Haz clic aquí!</a>
+        <a href="login.html" class="access-btn">¿Ya formas parte de WolfCore? ¡Inicia sesión aquí!</a>
       </div>
     </div>
   </div>
@@ -156,14 +151,6 @@
   <footer>
     © 2026 WolfCore Liberty — Institución Privada del Lobo
   </footer>
-
-  <!-- Verificar autenticación y redirigir si ya está logueado -->
-  <script>
-    // Si ya está autenticado, redirigir a la plataforma
-    if (sessionStorage.getItem('wolfcore_user')) {
-      window.location.href = 'platform.html';
-    }
-  </script>
 
 </body>
 </html>

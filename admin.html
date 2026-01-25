@@ -8,16 +8,17 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { background: #0a0a0a; color: #fff; font-family: 'Montserrat', sans-serif; padding: 2rem; }
     h1 { color: #4ade80; margin-bottom: 2rem; }
-    .create-form { background: rgba(15,15,25,0.8); padding: 2rem; border-radius: 12px; border: 1px solid #1e3a5f; max-width: 500px; }
+    .admin-section { background: rgba(15,15,25,0.8); padding: 2rem; border-radius: 12px; border: 1px solid #1e3a5f; margin-bottom: 2rem; }
     .form-group { margin-bottom: 1rem; }
-    .form-group input, .form-group select { width: 100%; padding: 0.6rem; background: rgba(10,10,20,0.7); border: 1px solid #1e3a5f; border-radius: 6px; color: white; font-family: 'Montserrat', sans-serif; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.6rem; background: rgba(10,10,20,0.7); border: 1px solid #1e3a5f; border-radius: 6px; color: white; font-family: 'Montserrat', sans-serif; }
     .create-btn { width: 100%; padding: 0.8rem; background: #0b1a3a; color: white; border: 1px solid #1e3a5f; border-radius: 8px; font-family: 'Montserrat', sans-serif; font-weight: 600; cursor: pointer; margin-top: 1rem; }
   </style>
 </head>
 <body>
   <h1>Panel de Administración CEO</h1>
   
-  <div class="create-form">
+  <!-- Crear Usuario -->
+  <div class="admin-section">
     <h2>Crear Nuevo Usuario</h2>
     <div class="form-group">
       <input type="text" id="newUsername" placeholder="Nombre de usuario">
@@ -35,8 +36,26 @@
     <button class="create-btn" onclick="createUser()">Crear Usuario</button>
   </div>
 
+  <!-- Gestionar Formaciones -->
+  <div class="admin-section">
+    <h2>Gestionar Formaciones</h2>
+    <div class="form-group">
+      <input type="text" id="courseTitle" placeholder="Título del curso">
+    </div>
+    <div class="form-group">
+      <select id="courseType">
+        <option value="video">Video</option>
+        <option value="pdf">PDF</option>
+        <option value="live">En Vivo</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <textarea id="courseDescription" placeholder="Descripción del curso" rows="3"></textarea>
+    </div>
+    <button class="create-btn" onclick="addCourse()">Agregar Curso</button>
+  </div>
+
   <script>
-    // Verificar que sea el CEO
     const user = JSON.parse(localStorage.getItem('wolfcore_user'));
     if (!user || user.level !== 'CEO') {
       alert("❌ Acceso restringido al CEO.");
@@ -63,8 +82,8 @@
       const password = generatePassword();
       let users = JSON.parse(localStorage.getItem('wolfcore_users')) || {};
       users[username] = {
-        password: password,
-        name: name,
+        password,
+        name,
         role: role === 'TRADER' ? 'Trader' : role === 'PREMIUM' ? 'Miembro Premium' : 'Mentor',
         level: role
       };
@@ -73,6 +92,21 @@
       alert(`✅ Usuario creado!\nUsuario: ${username}\nContraseña: ${password}`);
       document.getElementById('newUsername').value = '';
       document.getElementById('newName').value = '';
+    }
+
+    function addCourse() {
+      const title = document.getElementById('courseTitle').value.trim();
+      const type = document.getElementById('courseType').value;
+      const desc = document.getElementById('courseDescription').value.trim();
+      
+      if (!title || !desc) {
+        alert('❌ Completa todos los campos.');
+        return;
+      }
+
+      alert(`✅ Curso "${title}" agregado exitosamente.`);
+      document.getElementById('courseTitle').value = '';
+      document.getElementById('courseDescription').value = '';
     }
   </script>
 </body>

@@ -1,11 +1,15 @@
 {
-  "background_color": "#ffffff",
-  "dir": "ltr",
+  "name": "WolfCore Liberty",
+  "short_name": "WolfCore",
+  "start_url": "index.html",
   "display": "standalone",
-  "name": "wolfcore771-lb.github",
-  "orientation": "any",
-  "scope": "/",
-  "short_name": "wolfcore771-lb.github",
-  "start_url": "/",
-  "theme_color": "#ffffff"
+  "background_color": "#0a0a0a",
+  "theme_color": "#0b1a3a",
+  "icons": [
+    {
+      "src": "logo-wolfcore.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    }
+  ]
 }
