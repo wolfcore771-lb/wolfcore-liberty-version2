@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>WolfCore Liberty — Plataforma de Miembros</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <!-- PWA Manifest -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0b1a3a">
   <meta name="mobile-web-app-capable" content="yes">
@@ -377,16 +376,21 @@
   <!-- AUTENTICACIÓN Y GESTIÓN DE MENÚ -->
   <script>
     // Verificar autenticación
-    if (!sessionStorage.getItem('wolfcore_user')) {
+    const userData = localStorage.getItem('wolfcore_user');
+    
+    if (!userData) {
       alert("❌ Sesión expirada. Por favor inicia sesión.");
-      window.location.href = "index.html";
+      window.location.href = "login.html";
     }
 
-    const userData = JSON.parse(sessionStorage.getItem('wolfcore_user'));
-    console.log("Usuario autenticado:", userData.name);
+    const user = JSON.parse(userData);
+    console.log("Usuario autenticado:", user.name);
+    
+    // Mostrar nombre del usuario en la consola
+    console.log("Bienvenido, " + user.name + " (" + user.role + ")");
     
     // Mostrar enlace al Panel CEO si es el Director
-    if (userData.level === 'CEO') {
+    if (user.level === 'CEO') {
       const nav = document.getElementById('mainNav');
       if (nav && !nav.querySelector('li a[href="admin.html"]')) {
         const ceoLink = document.createElement('li');

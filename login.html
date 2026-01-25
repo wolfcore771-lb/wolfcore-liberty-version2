@@ -185,9 +185,6 @@
         return;
       }
       
-      // Validar desde localStorage (persistente - NO EXPIRA)
-      const users = JSON.parse(localStorage.getItem('wolfcore_users')) || {};
-      
       // ACCESO GARANTIZADO PARA EL CEO
       if (username === 'lobo' && password === 'wolfcore2026') {
         const ceoData = {
@@ -201,6 +198,8 @@
         return;
       }
       
+      // Validar miembros desde localStorage
+      const users = JSON.parse(localStorage.getItem('wolfcore_users')) || {};
       const user = users[username];
       
       if (user && user.password === password) {
