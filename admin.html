@@ -2,64 +2,273 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Panel CEO — WolfCore Liberty</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Panel de Administración del Lobo — WolfCore Liberty</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #0a0a0a; color: #fff; font-family: 'Montserrat', sans-serif; padding: 2rem; }
-    h1 { color: #4ade80; margin-bottom: 2rem; }
-    .admin-section { background: rgba(15,15,25,0.8); padding: 2rem; border-radius: 12px; border: 1px solid #1e3a5f; margin-bottom: 2rem; }
+    body { background: #0a0a0a; color: #fff; font-family: 'Inter', sans-serif; padding: 2rem; }
+    .container { max-width: 1200px; margin: 0 auto; }
+    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid #1e3a5f; }
+    h1 { color: #10b981; font-size: 2rem; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+    .stat-card { background: rgba(15,15,25,0.8); padding: 1.5rem; border-radius: 12px; border: 1px solid #1e3a5f; text-align: center; }
+    .stat-number { font-size: 2rem; font-weight: 700; color: #10b981; margin: 0.5rem 0; }
+    .admin-sections { display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; }
+    @media (max-width: 900px) { .admin-sections { grid-template-columns: 1fr; } }
+    .users-management, .create-user-form { background: rgba(15,15,25,0.8); padding: 2rem; border-radius: 12px; border: 1px solid #1e3a5f; margin-bottom: 2rem; }
+    .section-title { font-size: 1.5rem; margin-bottom: 1.5rem; color: #ffffff; display: flex; align-items: center; gap: 0.5rem; }
+    .users-list { max-height: 400px; overflow-y: auto; border: 1px solid #1e3a5f; border-radius: 8px; background: rgba(10,10,20,0.5); }
+    .user-item { padding: 1rem; border-bottom: 1px solid #1e3a5f; display: flex; justify-content: space-between; align-items: center; }
+    .user-item:last-child { border-bottom: none; }
+    .user-name-admin { font-weight: 600; }
+    .user-role-admin { font-size: 0.85rem; color: #cbd5e1; }
+    .user-status { width: 10px; height: 10px; border-radius: 50%; margin-right: 10px; }
+    .online { background: #10b981; }
+    .offline { background: #64748b; }
     .form-group { margin-bottom: 1rem; }
-    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.6rem; background: rgba(10,10,20,0.7); border: 1px solid #1e3a5f; border-radius: 6px; color: white; font-family: 'Montserrat', sans-serif; }
-    .create-btn { width: 100%; padding: 0.8rem; background: #0b1a3a; color: white; border: 1px solid #1e3a5f; border-radius: 8px; font-family: 'Montserrat', sans-serif; font-weight: 600; cursor: pointer; margin-top: 1rem; }
+    .form-group label { display: block; margin-bottom: 0.5rem; color: #cbd5e1; font-size: 0.9rem; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.6rem; background: rgba(10,10,20,0.7); border: 1px solid #1e3a5f; border-radius: 6px; color: white; font-family: 'Inter', sans-serif; }
+    .create-btn, .action-btn { width: 100%; padding: 0.8rem; background: #0b1a3a; color: white; border: 1px solid #1e3a5f; border-radius: 8px; font-family: 'Inter', sans-serif; font-weight: 600; cursor: pointer; transition: all 0.3s ease; margin-top: 0.5rem; }
+    .create-btn:hover, .action-btn:hover { background: #1a2a4a; }
+    .delete-btn { background: #dc2626; }
+    .delete-btn:hover { background: #b91c1c; }
+    .back-link { position: fixed; top: 20px; left: 20px; background: rgba(11,26,58,0.7); color: white; padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; z-index: 100; border: 1px solid #1e3a5f; }
   </style>
 </head>
 <body>
-  <h1>Panel de Administración CEO</h1>
+
+  <a href="platform.html" class="back-link">← Volver a Plataforma</a>
+
+  <div class="container">
+    <header>
+      <h1>Panel de Administración del Lobo</h1>
+      <div id="adminInfo" style="color: #cbd5e1;">Cargando...</div>
+    </header>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number" id="totalUsers">0</div>
+        <div class="stat-label">Miembros Totales</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="onlineUsers">0</div>
+        <div class="stat-label">En Línea</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="activeTraders">0</div>
+        <div class="stat-label">Traders Activos</div>
+      </div>
+    </div>
+
+    <div class="admin-sections">
+      <div>
+        <div class="users-management">
+          <h2 class="section-title">Gestión de Usuarios</h2>
+          <div class="users-list" id="usersList">
+            <div style="padding: 1rem; text-align: center; color: #cbd5e1;">Cargando usuarios...</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="create-user-form">
+        <h2 class="section-title">Invitar Nuevo Usuario</h2>
+        <p style="color: #cbd5e1; margin-bottom: 1.5rem; font-size: 0.9rem;">
+          El Lobo enviará una invitación REAL por WhatsApp y email para que el usuario se registre gratis y acceda a la plataforma.
+        </p>
+        
+        <div class="form-group">
+          <label for="newName">Nombre Completo</label>
+          <input type="text" id="newName" placeholder="ej: Juan Pérez" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="newEmail">Email</label>
+          <input type="email" id="newEmail" placeholder="ej: juan@empresa.com" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="newPhone">Teléfono (WhatsApp)</label>
+          <input type="tel" id="newPhone" placeholder="ej: +5491112345678" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="newRole">Rol</label>
+          <select id="newRole">
+            <option value="TRADER">Trader</option>
+            <option value="PREMIUM">Miembro Premium</option>
+            <option value="MENTOR">Mentor</option>
+          </select>
+        </div>
+        
+        <button class="create-btn" onclick="inviteUser()">Enviar Invitación REAL</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EmailJS -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   
-  <!-- Crear Usuario -->
-  <div class="admin-section">
-    <h2>Crear Nuevo Usuario</h2>
-    <div class="form-group">
-      <input type="text" id="newUsername" placeholder="Nombre de usuario">
-    </div>
-    <div class="form-group">
-      <input type="text" id="newName" placeholder="Nombre completo">
-    </div>
-    <div class="form-group">
-      <select id="newRole">
-        <option value="TRADER">Trader</option>
-        <option value="PREMIUM">Miembro Premium</option>
-        <option value="MENTOR">Mentor</option>
-      </select>
-    </div>
-    <button class="create-btn" onclick="createUser()">Crear Usuario</button>
-  </div>
+  <!-- Firebase -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp, getDocs, query, where, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
-  <!-- Gestionar Formaciones -->
-  <div class="admin-section">
-    <h2>Gestionar Formaciones</h2>
-    <div class="form-group">
-      <input type="text" id="courseTitle" placeholder="Título del curso">
-    </div>
-    <div class="form-group">
-      <select id="courseType">
-        <option value="video">Video</option>
-        <option value="pdf">PDF</option>
-        <option value="live">En Vivo</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <textarea id="courseDescription" placeholder="Descripción del curso" rows="3"></textarea>
-    </div>
-    <button class="create-btn" onclick="addCourse()">Agregar Curso</button>
-  </div>
+    const firebaseConfig = {
+      apiKey: "AIzaSyD1iqERPDahAc_OtXYnrYJvt6cbwNpu9UE",
+      authDomain: "wolfcore-libertyversion1.firebaseapp.com",
+      projectId: "wolfcore-libertyversion1",
+      storageBucket: "wolfcore-libertyversion1.firebasestorage.app",
+      messagingSenderId: "784073773217",
+      appId: "1:784073773217:web:26a4cf04d79a14fbf0e0e0"
+    };
 
-  <script>
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Inicializar EmailJS
+    const EMAILJS_PUBLIC_KEY = "6EBT7x4WdOSG96_XD";
+    emailjs.init(EMAILJS_PUBLIC_KEY);
+
+    // Verificar acceso Lobo
     const user = JSON.parse(localStorage.getItem('wolfcore_user'));
     if (!user || user.level !== 'CEO') {
-      alert("❌ Acceso restringido al CEO.");
+      alert("❌ Acceso restringido al Lobo.");
       window.location.href = "platform.html";
+    }
+
+    document.getElementById('adminInfo').textContent = `Lobo: ${user.name}`;
+
+    // Sistema de usuarios
+    let users = JSON.parse(localStorage.getItem('wolfcore_users')) || {
+      "lobo": { 
+        password: "wolfcore2026", 
+        name: "Marcos Fernández", 
+        role: "Director Fundador",
+        level: "CEO",
+        active: true,
+        lastActive: Date.now()
+      }
+    };
+
+    function saveUsers() {
+      localStorage.setItem('wolfcore_users', JSON.stringify(users));
+      updateStats();
+      renderUsersList();
+    }
+
+    function updateStats() {
+      const total = Object.keys(users).length;
+      const online = Object.values(users).filter(u => Date.now() - u.lastActive < 300000).length;
+      const traders = Object.values(users).filter(u => u.level !== 'CEO').length;
+      
+      document.getElementById('totalUsers').textContent = total;
+      document.getElementById('onlineUsers').textContent = online;
+      document.getElementById('activeTraders').textContent = traders;
+    }
+
+    function renderUsersList() {
+      const usersList = document.getElementById('usersList');
+      usersList.innerHTML = '';
+      
+      Object.entries(users).forEach(([username, user]) => {
+        if (username === 'lobo') return;
+        
+        const isOnline = Date.now() - user.lastActive < 300000;
+        const statusClass = isOnline ? 'online' : 'offline';
+        
+        const userDiv = document.createElement('div');
+        userDiv.className = 'user-item';
+        userDiv.innerHTML = `
+          <div style="display: flex; align-items: center;">
+            <div class="user-status ${statusClass}"></div>
+            <div>
+              <div class="user-name-admin">${user.name}</div>
+              <div class="user-role-admin">@${username} • ${user.role}</div>
+            </div>
+          </div>
+          <div>
+            <button class="action-btn" onclick="editUser('${username}')">Editar</button>
+            <button class="action-btn delete-btn" onclick="deleteUser('${username}')">Eliminar</button>
+          </div>
+        `;
+        usersList.appendChild(userDiv);
+      });
+    }
+
+    // Enviar invitación REAL
+    async function inviteUser() {
+      const name = document.getElementById('newName').value.trim();
+      const email = document.getElementById('newEmail').value.trim();
+      const phone = document.getElementById('newPhone').value.trim().replace(/\D/g, ''); // Solo números
+      const role = document.getElementById('newRole').value;
+      
+      if (!name || !email || !phone) {
+        alert('❌ Completa todos los campos.');
+        return;
+      }
+      
+      try {
+        const btn = document.querySelector('.create-btn');
+        btn.textContent = 'Enviando...';
+        btn.disabled = true;
+        
+        // Generar credenciales temporales
+        const username = email.split('@')[0].toLowerCase().replace(/\./g, '_');
+        const password = generatePassword();
+        
+        // Guardar invitación en Firestore
+        await addDoc(collection(db, 'invitations'), {
+          name, email, phone, role,
+          username, password,
+          invitedBy: 'lobo',
+          status: 'sent',
+          createdAt: serverTimestamp()
+        });
+
+        // ENVIAR EMAIL REAL
+        await emailjs.send("service_wolf6oo", "wolfcore_liberty", {
+          to_email: email,
+          user_name: name,
+          username: username,
+          password: password,
+          login_link: 'https://wolfcore771-lb.github.io/wolfcore-liberty-version2/login.html'
+        });
+
+        // ENVIAR WHATSAPP REAL (enlace directo)
+        const whatsappMessage = `Hola ${name},%20El%20Lobo%20te%20ha%20invitado%20a%20WolfCore%20Liberty.%20Tu%20usuario:%20${username}%20y%20contraseña:%20${password}.%20Accede%20aquí:%20https://wolfcore771-lb.github.io/wolfcore-liberty-version2/login.html`;
+        const whatsappUrl = `https://wa.me/${phone}?text=${whatsappMessage}`;
+        
+        // Abrir WhatsApp en nueva pestaña
+        window.open(whatsappUrl, '_blank');
+
+        // Guardar localmente
+        users[username] = {
+          password, name, 
+          role: role === 'TRADER' ? 'Trader' : role === 'PREMIUM' ? 'Miembro Premium' : 'Mentor',
+          level: role,
+          active: false,
+          lastActive: 0
+        };
+        saveUsers();
+        
+        alert(`✅ ¡Invitación enviada REAL!\n\nEmail enviado a: ${email}\nWhatsApp abierto para: +${phone}`);
+        
+        // Limpiar formulario
+        document.getElementById('newName').value = '';
+        document.getElementById('newEmail').value = '';
+        document.getElementById('newPhone').value = '';
+        
+        btn.textContent = 'Enviar Invitación REAL';
+        btn.disabled = false;
+        
+      } catch (error) {
+        console.error('Error:', error);
+        const btn = document.querySelector('.create-btn');
+        btn.textContent = 'Enviar Invitación REAL';
+        btn.disabled = false;
+        alert('❌ Error al enviar invitación real.');
+      }
     }
 
     function generatePassword() {
@@ -69,45 +278,48 @@
       return pwd;
     }
 
-    function createUser() {
-      const username = document.getElementById('newUsername').value.trim();
-      const name = document.getElementById('newName').value.trim();
-      const role = document.getElementById('newRole').value;
-      
-      if (!username || !name) {
-        alert('❌ Completa todos los campos.');
-        return;
+    function editUser(username) {
+      const user = users[username];
+      const newName = prompt("Editar nombre:", user.name);
+      if (newName && newName !== user.name) {
+        user.name = newName;
+        saveUsers();
+        alert("✅ Usuario actualizado.");
       }
-
-      const password = generatePassword();
-      let users = JSON.parse(localStorage.getItem('wolfcore_users')) || {};
-      users[username] = {
-        password,
-        name,
-        role: role === 'TRADER' ? 'Trader' : role === 'PREMIUM' ? 'Miembro Premium' : 'Mentor',
-        level: role
-      };
-      localStorage.setItem('wolfcore_users', JSON.stringify(users));
-      
-      alert(`✅ Usuario creado!\nUsuario: ${username}\nContraseña: ${password}`);
-      document.getElementById('newUsername').value = '';
-      document.getElementById('newName').value = '';
     }
 
-    function addCourse() {
-      const title = document.getElementById('courseTitle').value.trim();
-      const type = document.getElementById('courseType').value;
-      const desc = document.getElementById('courseDescription').value.trim();
+    async function deleteUser(username) {
+      if (!confirm(`¿Eliminar permanentemente a @${username}?`)) return;
       
-      if (!title || !desc) {
-        alert('❌ Completa todos los campos.');
-        return;
+      try {
+        // Eliminar de Firestore
+        const q = query(collection(db, 'users'), where('username', '==', username));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach(async (doc) => {
+          await deleteDoc(doc.ref);
+        });
+        
+        delete users[username];
+        saveUsers();
+        alert("✅ Usuario eliminado.");
+      } catch (error) {
+        console.error('Error al eliminar:', error);
+        alert('❌ Error al eliminar usuario.');
       }
-
-      alert(`✅ Curso "${title}" agregado exitosamente.`);
-      document.getElementById('courseTitle').value = '';
-      document.getElementById('courseDescription').value = '';
     }
+
+    // Inicializar
+    updateStats();
+    renderUsersList();
+    
+    // Actualizar actividad del Lobo
+    setInterval(() => {
+      if (users.lobo) {
+        users.lobo.lastActive = Date.now();
+        localStorage.setItem('wolfcore_users', JSON.stringify(users));
+      }
+    }, 60000);
   </script>
+
 </body>
 </html>
