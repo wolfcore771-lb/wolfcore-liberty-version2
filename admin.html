@@ -111,9 +111,11 @@
   
   <!-- Firebase -->
   <script type="module">
+    // Importar funciones de Firebase
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
     import { getFirestore, collection, addDoc, serverTimestamp, getDocs, query, where, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
+    // Tu configuración de Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyD1iqERPDahAc_OtXYnrYJvt6cbwNpu9UE",
       authDomain: "wolfcore-libertyversion1.firebaseapp.com",
@@ -123,8 +125,11 @@
       appId: "1:784073773217:web:26a4cf04d79a14fbf0e0e0"
     };
 
+    // Inicializar Firebase
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+
+    console.log("✅ Firebase inicializado correctamente");
 
     // Inicializar EmailJS
     const EMAILJS_PUBLIC_KEY = "6EBT7x4WdOSG96_XD";
@@ -200,24 +205,32 @@
     async function inviteUser() {
       const name = document.getElementById('newName').value.trim();
       const email = document.getElementById('newEmail').value.trim();
-      const phone = document.getElementById('newPhone').value.trim().replace(/\D/g, ''); // Solo números
+      const phoneInput = document.getElementById('newPhone').value.trim();
       const role = document.getElementById('newRole').value;
       
-      if (!name || !email || !phone) {
+      // Validar campos
+      if (!name || !email || !phoneInput) {
         alert('❌ Completa todos los campos.');
         return;
       }
       
+      // Formatear teléfono para WhatsApp (solo números)
+      const phone = phoneInput.replace(/\D/g, '');
+      if (phone.length < 10) {
+        alert('❌ Teléfono inválido. Usa formato internacional: +5491112345678');
+        return;
+      }
+
       try {
         const btn = document.querySelector('.create-btn');
         btn.textContent = 'Enviando...';
         btn.disabled = true;
         
-        // Generar credenciales temporales
+        // Generar credenciales
         const username = email.split('@')[0].toLowerCase().replace(/\./g, '_');
         const password = generatePassword();
         
-        // Guardar invitación en Firestore
+        // Guardar en Firestore
         await addDoc(collection(db, 'invitations'), {
           name, email, phone, role,
           username, password,
@@ -227,19 +240,21 @@
         });
 
         // ENVIAR EMAIL REAL
-        await emailjs.send("service_wolf6oo", "wolfcore_liberty", {
-          to_email: email,
-          user_name: name,
-          username: username,
-          password: password,
-          login_link: 'https://wolfcore771-lb.github.io/wolfcore-liberty-version2/login.html'
-        });
+        try {
+          await emailjs.send("service_wolf6oo", "wolfcore_liberty", {
+            to_email: email,
+            user_name: name,
+            username: username,
+            password: password,
+            login_link: 'https://wolfcore771-lb.github.io/wolfcore-liberty-version2/login.html'
+          });
+        } catch (emailError) {
+          console.warn('Email falló, pero invitación guardada:', emailError);
+        }
 
-        // ENVIAR WHATSAPP REAL (enlace directo)
-        const whatsappMessage = `Hola ${name},%20El%20Lobo%20te%20ha%20invitado%20a%20WolfCore%20Liberty.%20Tu%20usuario:%20${username}%20y%20contraseña:%20${password}.%20Accede%20aquí:%20https://wolfcore771-lb.github.io/wolfcore-liberty-version2/login.html`;
-        const whatsappUrl = `https://wa.me/${phone}?text=${whatsappMessage}`;
-        
-        // Abrir WhatsApp en nueva pestaña
+        // ENVIAR WHATSAPP REAL
+        const message = `Hola ${name}, El Lobo te ha invitado a WolfCore Liberty. Tu usuario: ${username} y contraseña: ${password}. Accede aquí: https://wolfcore771-lb.github.io/wolfcore-liberty-version2/login.html`;
+        const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
         window.open(whatsappUrl, '_blank');
 
         // Guardar localmente
@@ -267,7 +282,7 @@
         const btn = document.querySelector('.create-btn');
         btn.textContent = 'Enviar Invitación REAL';
         btn.disabled = false;
-        alert('❌ Error al enviar invitación real.');
+        alert('❌ Error al enviar invitación. Verifica las reglas de Firestore.');
       }
     }
 
