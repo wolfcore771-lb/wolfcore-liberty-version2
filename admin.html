@@ -107,7 +107,7 @@
   </div>
 
   <!-- EmailJS -->
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   
   <!-- Firebase CDN (NO MODULAR) -->
   <script src="https://www.gstatic.com/firebasejs/12.8.0/firebase-app-compat.js"></script>
@@ -233,14 +233,30 @@
         status: 'sent',
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       }).then(() => {
-        // ENVIAR EMAIL REAL
+        // ENVIAR EMAIL REAL - PARÁMETROS CORRECTOS
+        const templateParams = {
+          service_id: "service_wolf6oo",
+          template_id: "wolfcore_liberty",
+          user_id: EMAILJS_PUBLIC_KEY,
+          template_params: {
+            to_email: email,
+            user_name: name,
+            username: username,
+            password: password,
+            login_link: 'https://wolfcore771-lb.github.io/wolfcore-liberty-version2/login.html'
+          }
+        };
+
+        // Método alternativo de EmailJS
         emailjs.send("service_wolf6oo", "wolfcore_liberty", {
           to_email: email,
           user_name: name,
           username: username,
           password: password,
           login_link: 'https://wolfcore771-lb.github.io/wolfcore-liberty-version2/login.html'
-        }).then(() => {
+        }).then(function(response) {
+          console.log('Email enviado exitosamente!', response.status, response.text);
+          
           // ENVIAR WHATSAPP REAL
           const message = `Hola ${name}, El Lobo te ha invitado a WolfCore Liberty. Tu usuario: ${username} y contraseña: ${password}. Accede aquí: https://wolfcore771-lb.github.io/wolfcore-liberty-version2/login.html`;
           const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
@@ -264,8 +280,8 @@
           
           btn.textContent = 'Enviar Invitación REAL';
           btn.disabled = false;
-        }).catch((emailError) => {
-          console.error('Error en EmailJS:', emailError);
+        }, function(error) {
+          console.error('Error en EmailJS:', error);
           alert('❌ Error al enviar email. Verifica tu template en EmailJS.');
           btn.textContent = 'Enviar Invitación REAL';
           btn.disabled = false;
