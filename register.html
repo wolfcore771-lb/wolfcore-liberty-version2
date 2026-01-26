@@ -112,6 +112,7 @@
 
     document.getElementById('registerForm').addEventListener('submit', async e => {
       e.preventDefault();
+      
       const fullName = document.getElementById('fullName').value.trim();
       const email = document.getElementById('email').value.trim();
       const phone = document.getElementById('phone').value.trim();
@@ -119,7 +120,7 @@
       const motivation = document.getElementById('motivation').value.trim();
       
       if (!fullName || !email || !phone || !experience || !motivation) {
-        alert('❌ Completa todos los campos.');
+        alert('❌ Por favor completa todos los campos.');
         return;
       }
       
@@ -152,18 +153,22 @@
           login_link: 'https://wolfcore771-lb.github.io/wolfcore-liberty-version2/login.html'
         });
         
+        // ACCESO DIRECTO A PLATAFORMA
+        localStorage.setItem('wolfcore_user', JSON.stringify({
+          username, name: fullName, role: 'Miembro', level: 'TRADER'
+        }));
+        
         btn.textContent = 'Crear Cuenta y Acceder';
         btn.disabled = false;
         
-        alert(`✅ ¡Cuenta creada!\nUsuario: ${username}\nContraseña: ${password}`);
-        window.location.href = 'login.html';
+        window.location.href = 'platform.html';
         
       } catch (error) {
         console.error('Error:', error);
         const btn = document.querySelector('.register-btn');
         btn.textContent = 'Crear Cuenta y Acceder';
         btn.disabled = false;
-        alert('❌ Error al crear cuenta.');
+        alert('❌ Error al crear cuenta. Verifica tu conexión.');
       }
     });
   </script>

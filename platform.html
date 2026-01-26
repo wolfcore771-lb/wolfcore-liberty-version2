@@ -14,7 +14,7 @@
     main { padding: 100px 2rem 4rem; min-height: 100vh; }
     .hero { text-align: center; max-width: 800px; margin: 0 auto 3rem; }
     .logo-large { width: 180px; margin: 0 auto 2rem; border-radius: 10px; border: 2px solid #1e3a5f; background: rgba(15,15,25,0.4); padding: 10px; }
-    h1 { font-size: 2.5rem; background: linear-gradient(to right, #ffffff, #c0d0ff); -webkit-background-clip: text; background-clip: text; color: transparent; margin-bottom: 1rem; }
+    .welcome-text { font-size: 1.4rem; line-height: 1.8; color: #cbd5e1; margin-bottom: 2rem; }
     section { padding: 4rem 2rem; max-width: 1200px; margin: 0 auto 3rem; text-align: center; }
     section h2 { font-size: 2rem; margin-bottom: 1.5rem; color: #ffffff; }
     .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; margin-top: 2rem; }
@@ -40,8 +40,12 @@
   <main>
     <div class="hero">
       <img src="logo-wolfcore.jpg" alt="Logo" class="logo-large">
-      <h1>Bienvenido a WolfCore Liberty</h1>
-      <p id="welcomeMessage">Cargando...</p>
+      <div class="welcome-text" id="welcomeMessage">
+        Bienvenidos a WolfCore Liberty<br>
+        Donde el futuro es hoy. Una institución privada del lobo, diseñada para cada comerciante en los mercados financieros, 
+        donde te unirás a esta gran familia Wolf para que puedas llevar tu vida al siguiente nivel y así gozar de la libertad 
+        que los mercados, junto a esta institución, puedan darte.
+      </div>
     </div>
 
     <!-- Billetera Virtual -->
@@ -85,9 +89,6 @@
       alert("❌ Sesión expirada. Inicia sesión.");
       window.location.href = "login.html";
     }
-
-    document.getElementById('welcomeMessage').textContent = 
-      `Bienvenido, ${user.name} (${user.role})`;
 
     // Mostrar Panel CEO si es el Director
     if (user.level === 'CEO') {
