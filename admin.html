@@ -218,35 +218,29 @@
         return;
       }
 
-      try {
-        const btn = document.querySelector('.create-btn');
-        btn.textContent = 'Enviando...';
-        btn.disabled = true;
-        
-        const username = email.split('@')[0].toLowerCase().replace(/\./g, '_');
-        const password = generateSimplePassword();
-        
-        // Guardar en Firestore
-        db.collection('invitations').add({
-          name, email, phone, role,
-          username, password,
-          invitedBy: 'lobo',
-          status: 'sent',
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        }).then(() => {
-          // ENVIAR EMAIL REAL
-          emailjs.send("service_wolf6oo", "wolfcore_liberty", {
-            to_email: email,
-            user_name: name,
-            username: username,
-            password: password,
-            login_link: 'https://wolfcore771-lb.github.io/wolfcore-liberty-version2/login.html'
-          }).then(() => {
-            console.log('Email enviado');
-          }).catch((error) => {
-            console.warn('Email falló:', error);
-          });
+      const btn = document.querySelector('.create-btn');
+      btn.textContent = 'Enviando...';
+      btn.disabled = true;
+      
+      const username = email.split('@')[0].toLowerCase().replace(/\./g, '_');
+      const password = generateSimplePassword();
 
+      // Guardar en Firestore PRIMERO
+      db.collection('invitations').add({
+        name, email, phone, role,
+        username, password,
+        invitedBy: 'lobo',
+        status: 'sent',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      }).then(() => {
+        // ENVIAR EMAIL REAL
+        emailjs.send("service_wolf6oo", "wolfcore_liberty", {
+          to_email: email,
+          user_name: name,
+          username: username,
+          password: password,
+          login_link: 'https://wolfcore771-lb.github.io/wolfcore-liberty-version2/login.html'
+        }).then(() => {
           // ENVIAR WHATSAPP REAL
           const message = `Hola ${name}, El Lobo te ha invitado a WolfCore Liberty. Tu usuario: ${username} y contraseña: ${password}. Accede aquí: https://wolfcore771-lb.github.io/wolfcore-liberty-version2/login.html`;
           const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
@@ -270,14 +264,18 @@
           
           btn.textContent = 'Enviar Invitación REAL';
           btn.disabled = false;
+        }).catch((emailError) => {
+          console.error('Error en EmailJS:', emailError);
+          alert('❌ Error al enviar email. Verifica tu template en EmailJS.');
+          btn.textContent = 'Enviar Invitación REAL';
+          btn.disabled = false;
         });
-      } catch (error) {
-        console.error('Error:', error);
-        const btn = document.querySelector('.create-btn');
+      }).catch((firestoreError) => {
+        console.error('Error en Firestore:', firestoreError);
+        alert('❌ Error al guardar en Firestore. Verifica tus reglas.');
         btn.textContent = 'Enviar Invitación REAL';
         btn.disabled = false;
-        alert('❌ Error al enviar invitación.');
-      }
+      });
     }
 
     function generateSimplePassword() {
@@ -300,21 +298,17 @@
     function deleteUser(username) {
       if (!confirm(`¿Eliminar permanentemente a @${username}?`)) return;
       
-      try {
-        // Eliminar de Firestore
-        db.collection('users').where('username', '==', username).get().then((querySnapshot) => {
-          querySnapshot.forEach((doc) => {
-            doc.ref.delete();
-          });
+      db.collection('users').where('username', '==', username).get().then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          doc.ref.delete();
         });
-        
         delete users[username];
         saveUsers();
         alert("✅ Usuario eliminado.");
-      } catch (error) {
+      }).catch((error) => {
         console.error('Error al eliminar:', error);
         alert('❌ Error al eliminar usuario.');
-      }
+      });
     }
 
     // Inicializar
