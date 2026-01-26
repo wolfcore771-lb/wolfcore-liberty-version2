@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>WolfCore Liberty — Donde el futuro es hoy</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     * {
       margin: 0;
@@ -13,43 +13,129 @@
     }
 
     body {
-      background: linear-gradient(135deg, #0a0a0a 0%, #0b1a3a 100%);
+      background: #0a0a0a;
       color: #ffffff;
-      font-family: 'Montserrat', sans-serif;
+      font-family: 'Inter', sans-serif;
       min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
       position: relative;
     }
 
-    .access-container {
-      background: rgba(15, 15, 25, 0.8);
-      border-radius: 20px;
-      padding: 3rem;
-      width: 90%;
-      max-width: 600px;
-      border: 1px solid #1e3a5f;
-      box-shadow: 0 20px 50px rgba(11, 26, 58, 0.5);
-      text-align: center;
+    /* Gradient overlay like FundingPips */
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 90% 10%, rgba(139, 92, 246, 0.1) 0%, transparent 30%),
+                  radial-gradient(circle at 10% 90%, rgba(16, 185, 129, 0.1) 0%, transparent 30%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .logo-container {
-      margin-bottom: 2.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
     }
 
-    .logo-large {
-      width: 180px;
-      height: auto;
+    .logo {
+      width: 50px;
+      height: 50px;
+      border-radius: 8px;
+      border: 2px solid #1e3a5f;
+      background: rgba(11, 26, 58, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo img {
+      width: 80%;
+      height: 80%;
+      object-fit: contain;
+    }
+
+    .logo-text {
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(to right, #ffffff, #a0b0d0);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    nav ul {
+      display: flex;
+      list-style: none;
+      gap: 2rem;
+    }
+
+    nav a {
+      color: #cbd5e1;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: color 0.2s ease;
+    }
+
+    nav a:hover {
+      color: #ffffff;
+    }
+
+    main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 4rem 0;
+      min-height: calc(100vh - 200px);
+    }
+
+    .hero-content {
+      max-width: 700px;
+    }
+
+    .hero-logo {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 2rem;
       border-radius: 12px;
       border: 2px solid #1e3a5f;
       background: rgba(11, 26, 58, 0.4);
-      padding: 15px;
-      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .hero-logo img {
+      width: 80%;
+      height: 80%;
+      object-fit: contain;
     }
 
     h1 {
-      font-size: 2.2rem;
+      font-size: 3.5rem;
+      font-weight: 800;
+      line-height: 1.2;
       margin-bottom: 1.5rem;
       background: linear-gradient(to right, #ffffff, #c0d0ff);
       -webkit-background-clip: text;
@@ -57,100 +143,141 @@
       color: transparent;
     }
 
-    .description {
+    .hero-description {
+      font-size: 1.25rem;
       color: #cbd5e1;
-      line-height: 1.7;
+      line-height: 1.6;
       margin-bottom: 2.5rem;
-      font-size: 1.15rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
-    .access-section {
-      background: rgba(11, 26, 58, 0.3);
-      padding: 2rem;
-      border-radius: 16px;
-      border: 1px solid #1e3a5f;
-    }
-
-    .access-section h2 {
-      margin-bottom: 1.5rem;
-      color: #4ade80;
-      font-size: 1.4rem;
-    }
-
-    .access-buttons {
+    .cta-buttons {
       display: flex;
-      flex-direction: column;
-      gap: 1rem;
+      gap: 1.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
     }
 
-    .access-btn {
-      display: inline-block;
-      padding: 0.9rem 2rem;
-      background: #0b1a3a;
-      color: white;
-      border-radius: 32px;
-      text-decoration: none;
+    .btn {
+      padding: 0.85rem 2.2rem;
+      border-radius: 8px;
       font-weight: 600;
-      transition: all 0.3s ease;
-      border: 1px solid #1e3a5f;
-      font-size: 1.15rem;
-      text-align: center;
+      font-size: 1.1rem;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      border: 2px solid transparent;
     }
 
-    .access-btn:hover {
-      background: #1a2a4a;
+    .btn-primary {
+      background: linear-gradient(135deg, #16a34a, #10b981);
+      color: white;
+      box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-primary:hover {
       transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(11, 26, 58, 0.5);
+      box-shadow: 0 6px 25px rgba(16, 185, 129, 0.4);
     }
 
-    .register-btn {
-      background: #16a34a;
+    .btn-secondary {
+      background: transparent;
+      color: #cbd5e1;
+      border-color: #1e3a5f;
     }
 
-    .register-btn:hover {
-      background: #10b981;
+    .btn-secondary:hover {
+      background: rgba(30, 58, 95, 0.3);
+      color: white;
     }
 
     footer {
-      position: absolute;
-      bottom: 20px;
       text-align: center;
-      width: 100%;
-      color: #cbd5e1;
-      font-size: 0.85rem;
+      padding: 2rem 0;
+      color: #64748b;
+      font-size: 0.9rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      margin-top: auto;
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2.5rem;
+      }
+      
+      .hero-description {
+        font-size: 1.1rem;
+      }
+      
+      .cta-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .btn {
+        width: 100%;
+        max-width: 300px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 2rem;
+      }
+      
+      .hero-logo {
+        width: 100px;
+        height: 100px;
+      }
     }
   </style>
 </head>
 <body>
 
-  <div class="access-container">
-    <div class="logo-container">
-      <img src="logo-wolfcore.jpg" alt="WolfCore Liberty Logo" class="logo-large">
-    </div>
-    
-    <h1>Bienvenidos a WolfCore Liberty</h1>
-    
-    <p class="description">
-      Donde el futuro es hoy. Una institución privada del lobo, diseñada para cada comerciante en los mercados financieros, 
-      donde te unirás a esta gran familia Wolf para que puedas llevar tu vida al siguiente nivel y así gozar de la libertad 
-      que los mercados, junto a esta institución, puedan darte.
-    </p>
-    
-    <div class="access-section">
-      <h2>Acceso a WolfCore Liberty</h2>
-      <p style="color: #cbd5e1; margin-bottom: 1.5rem;">
-        Elige cómo deseas acceder a la institución privada del lobo.
-      </p>
-      <div class="access-buttons">
-        <a href="register.html" class="access-btn register-btn">¿Eres nuevo/a? ¡Regístrate ahora!</a>
-        <a href="login.html" class="access-btn">¿Ya formas parte de WolfCore? ¡Inicia sesión aquí!</a>
+  <div class="container">
+    <header>
+      <div class="logo-container">
+        <div class="logo">
+          <img src="logo-wolfcore.jpg" alt="WolfCore Liberty Logo">
+        </div>
+        <div class="logo-text">WolfCore Liberty</div>
       </div>
-    </div>
-  </div>
+      <nav>
+        <ul>
+          <li><a href="#about">About</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+          <li><a href="#resources">Resources</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+    </header>
 
-  <footer>
-    © 2026 WolfCore Liberty — Institución Privada del Lobo
-  </footer>
+    <main>
+      <div class="hero-content">
+        <div class="hero-logo">
+          <img src="logo-wolfcore.jpg" alt="WolfCore Liberty">
+        </div>
+        
+        <h1>Bienvenidos a WolfCore Liberty</h1>
+        
+        <p class="hero-description">
+          Donde el futuro es hoy. Una institución privada del lobo, diseñada para cada comerciante en los mercados financieros, 
+          donde te unirás a esta gran familia Wolf para que puedas llevar tu vida al siguiente nivel y así gozar de la libertad 
+          que los mercados, junto a esta institución, puedan darte.
+        </p>
+        
+        <div class="cta-buttons">
+          <a href="register.html" class="btn btn-primary">¿Eres nuevo/a? ¡Regístrate ahora!</a>
+          <a href="login.html" class="btn btn-secondary">¿Ya formas parte de WolfCore? ¡Inicia sesión aquí!</a>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      © 2026 WolfCore Liberty — Institución Privada del Lobo. Todos los derechos reservados.
+    </footer>
+  </div>
 
 </body>
 </html>
