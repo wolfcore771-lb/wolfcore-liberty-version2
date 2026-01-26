@@ -84,13 +84,12 @@
   <!-- EmailJS -->
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   
-  <!-- Firebase -->
-  <script type="module">
-    // Importar funciones de Firebase
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
-
-    // Tu configuración de Firebase
+  <!-- Firebase CDN (NO MODULAR) -->
+  <script src="https://www.gstatic.com/firebasejs/12.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore-compat.js"></script>
+  
+  <script>
+    // Configuración de Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyD1iqERPDahAc_OtXYnrYJvt6cbwNpu9UE",
       authDomain: "wolfcore-libertyversion1.firebaseapp.com",
@@ -101,8 +100,8 @@
     };
 
     // Inicializar Firebase
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
     console.log("✅ Firebase inicializado correctamente");
 
@@ -110,14 +109,14 @@
     const EMAILJS_PUBLIC_KEY = "6EBT7x4WdOSG96_XD";
     emailjs.init(EMAILJS_PUBLIC_KEY);
 
-    function generatePassword() {
-      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%';
+    function generateSimplePassword() {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
       let pwd = '';
-      for (let i = 0; i < 12; i++) pwd += chars.charAt(Math.floor(Math.random() * chars.length));
+      for (let i = 0; i < 8; i++) pwd += chars.charAt(Math.floor(Math.random() * chars.length));
       return pwd;
     }
 
-    document.getElementById('registerForm').addEventListener('submit', async e => {
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
       e.preventDefault();
       
       const fullName = document.getElementById('fullName').value.trim();
@@ -137,49 +136,50 @@
         btn.disabled = true;
         
         const username = email.split('@')[0].toLowerCase().replace(/\./g, '_');
-        const password = generatePassword();
+        const password = generateSimplePassword();
         
         // Guardar en Firestore
-        await addDoc(collection(db, 'users'), {
+        db.collection('users').add({
           username, fullName, email, phone, experience, motivation,
           role: 'Miembro', level: 'TRADER', password, active: true,
-          createdAt: serverTimestamp()
-        });
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        }).then(() => {
+          // Guardar localmente
+          let users = JSON.parse(localStorage.getItem('wolfcore_users')) || {};
+          users[username] = { password, name: fullName, role: 'Miembro', level: 'TRADER' };
+          localStorage.setItem('wolfcore_users', JSON.stringify(users));
 
-        // Guardar localmente
-        let users = JSON.parse(localStorage.getItem('wolfcore_users')) || {};
-        users[username] = { password, name: fullName, role: 'Miembro', level: 'TRADER' };
-        localStorage.setItem('wolfcore_users', JSON.stringify(users));
-
-        // Enviar email
-        try {
-          await emailjs.send("service_wolf6oo", "wolfcore_liberty", {
+          // Enviar email
+          emailjs.send("service_wolf6oo", "wolfcore_liberty", {
             to_email: email,
             user_name: fullName,
-            username,
-            password,
+            username: username,
+            password: password,
             login_link: 'https://wolfcore771-lb.github.io/wolfcore-liberty-version2/login.html'
+          }).then(() => {
+            console.log('Email enviado');
+          }).catch((error) => {
+            console.warn('Email falló:', error);
           });
-        } catch (emailError) {
-          console.warn('Email falló, pero cuenta creada');
-        }
-        
-        // ACCESO DIRECTO A PLATAFORMA
-        localStorage.setItem('wolfcore_user', JSON.stringify({
-          username, name: fullName, role: 'Miembro', level: 'TRADER'
-        }));
-        
-        btn.textContent = 'Crear Cuenta y Acceder';
-        btn.disabled = false;
-        
-        window.location.href = 'platform.html';
-        
+          
+          // ACCESO DIRECTO A PLATAFORMA
+          localStorage.setItem('wolfcore_user', JSON.stringify({
+            username, name: fullName, role: 'Miembro', level: 'TRADER'
+          }));
+          
+          alert(`✅ ¡Cuenta creada!\n\nUsuario: ${username}\nContraseña: ${password}`);
+          
+          btn.textContent = 'Crear Cuenta y Acceder';
+          btn.disabled = false;
+          
+          window.location.href = 'platform.html';
+        });
       } catch (error) {
         console.error('Error:', error);
         const btn = document.querySelector('.register-btn');
         btn.textContent = 'Crear Cuenta y Acceder';
         btn.disabled = false;
-        alert('❌ Error al crear cuenta. Verifica las reglas de Firestore.');
+        alert('❌ Error al crear cuenta.');
       }
     });
   </script>

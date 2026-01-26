@@ -109,13 +109,12 @@
   <!-- EmailJS -->
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   
-  <!-- Firebase -->
-  <script type="module">
-    // Importar funciones de Firebase
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, serverTimestamp, getDocs, query, where, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
-
-    // Tu configuración de Firebase
+  <!-- Firebase CDN (NO MODULAR) -->
+  <script src="https://www.gstatic.com/firebasejs/12.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore-compat.js"></script>
+  
+  <script>
+    // Configuración de Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyD1iqERPDahAc_OtXYnrYJvt6cbwNpu9UE",
       authDomain: "wolfcore-libertyversion1.firebaseapp.com",
@@ -126,8 +125,8 @@
     };
 
     // Inicializar Firebase
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
     console.log("✅ Firebase inicializado correctamente");
 
@@ -201,20 +200,18 @@
       });
     }
 
-    // Enviar invitación REAL
-    async function inviteUser() {
+    // FUNCIONES GLOBALES
+    function inviteUser() {
       const name = document.getElementById('newName').value.trim();
       const email = document.getElementById('newEmail').value.trim();
       const phoneInput = document.getElementById('newPhone').value.trim();
       const role = document.getElementById('newRole').value;
       
-      // Validar campos
       if (!name || !email || !phoneInput) {
         alert('❌ Completa todos los campos.');
         return;
       }
       
-      // Formatear teléfono para WhatsApp (solo números)
       const phone = phoneInput.replace(/\D/g, '');
       if (phone.length < 10) {
         alert('❌ Teléfono inválido. Usa formato internacional: +5491112345678');
@@ -226,70 +223,67 @@
         btn.textContent = 'Enviando...';
         btn.disabled = true;
         
-        // Generar credenciales
         const username = email.split('@')[0].toLowerCase().replace(/\./g, '_');
-        const password = generatePassword();
+        const password = generateSimplePassword();
         
         // Guardar en Firestore
-        await addDoc(collection(db, 'invitations'), {
+        db.collection('invitations').add({
           name, email, phone, role,
           username, password,
           invitedBy: 'lobo',
           status: 'sent',
-          createdAt: serverTimestamp()
-        });
-
-        // ENVIAR EMAIL REAL
-        try {
-          await emailjs.send("service_wolf6oo", "wolfcore_liberty", {
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        }).then(() => {
+          // ENVIAR EMAIL REAL
+          emailjs.send("service_wolf6oo", "wolfcore_liberty", {
             to_email: email,
             user_name: name,
             username: username,
             password: password,
             login_link: 'https://wolfcore771-lb.github.io/wolfcore-liberty-version2/login.html'
+          }).then(() => {
+            console.log('Email enviado');
+          }).catch((error) => {
+            console.warn('Email falló:', error);
           });
-        } catch (emailError) {
-          console.warn('Email falló, pero invitación guardada:', emailError);
-        }
 
-        // ENVIAR WHATSAPP REAL
-        const message = `Hola ${name}, El Lobo te ha invitado a WolfCore Liberty. Tu usuario: ${username} y contraseña: ${password}. Accede aquí: https://wolfcore771-lb.github.io/wolfcore-liberty-version2/login.html`;
-        const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-        window.open(whatsappUrl, '_blank');
+          // ENVIAR WHATSAPP REAL
+          const message = `Hola ${name}, El Lobo te ha invitado a WolfCore Liberty. Tu usuario: ${username} y contraseña: ${password}. Accede aquí: https://wolfcore771-lb.github.io/wolfcore-liberty-version2/login.html`;
+          const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+          window.open(whatsappUrl, '_blank');
 
-        // Guardar localmente
-        users[username] = {
-          password, name, 
-          role: role === 'TRADER' ? 'Trader' : role === 'PREMIUM' ? 'Miembro Premium' : 'Mentor',
-          level: role,
-          active: false,
-          lastActive: 0
-        };
-        saveUsers();
-        
-        alert(`✅ ¡Invitación enviada REAL!\n\nEmail enviado a: ${email}\nWhatsApp abierto para: +${phone}`);
-        
-        // Limpiar formulario
-        document.getElementById('newName').value = '';
-        document.getElementById('newEmail').value = '';
-        document.getElementById('newPhone').value = '';
-        
-        btn.textContent = 'Enviar Invitación REAL';
-        btn.disabled = false;
-        
+          // Guardar localmente
+          users[username] = {
+            password, name, 
+            role: role === 'TRADER' ? 'Trader' : role === 'PREMIUM' ? 'Miembro Premium' : 'Mentor',
+            level: role,
+            active: false,
+            lastActive: 0
+          };
+          saveUsers();
+          
+          alert(`✅ ¡Invitación enviada REAL!\n\nUsuario: ${username}\nContraseña: ${password}\n\nEmail enviado a: ${email}\nWhatsApp abierto para: +${phone}`);
+          
+          document.getElementById('newName').value = '';
+          document.getElementById('newEmail').value = '';
+          document.getElementById('newPhone').value = '';
+          
+          btn.textContent = 'Enviar Invitación REAL';
+          btn.disabled = false;
+        });
       } catch (error) {
         console.error('Error:', error);
         const btn = document.querySelector('.create-btn');
         btn.textContent = 'Enviar Invitación REAL';
         btn.disabled = false;
-        alert('❌ Error al enviar invitación. Verifica las reglas de Firestore.');
+        alert('❌ Error al enviar invitación.');
       }
     }
 
-    function generatePassword() {
-      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%';
+    function generateSimplePassword() {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
       let pwd = '';
-      for (let i = 0; i < 12; i++) pwd += chars.charAt(Math.floor(Math.random() * chars.length));
+      for (let i = 0; i < 8; i++) pwd += chars.charAt(Math.floor(Math.random() * chars.length));
       return pwd;
     }
 
@@ -303,15 +297,15 @@
       }
     }
 
-    async function deleteUser(username) {
+    function deleteUser(username) {
       if (!confirm(`¿Eliminar permanentemente a @${username}?`)) return;
       
       try {
         // Eliminar de Firestore
-        const q = query(collection(db, 'users'), where('username', '==', username));
-        const querySnapshot = await getDocs(q);
-        querySnapshot.forEach(async (doc) => {
-          await deleteDoc(doc.ref);
+        db.collection('users').where('username', '==', username).get().then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            doc.ref.delete();
+          });
         });
         
         delete users[username];
