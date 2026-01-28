@@ -134,7 +134,7 @@
     const EMAILJS_PUBLIC_KEY = "6EBT7x4WdOSG96_XD";
     emailjs.init(EMAILJS_PUBLIC_KEY);
 
-    // Verificar acceso Lobo (CON NUEVA CONTRASEÑA)
+    // Verificar acceso Lobo
     const user = JSON.parse(localStorage.getItem('wolfcore_user'));
     if (!user || user.level !== 'CEO') {
       alert("❌ Acceso restringido al Lobo.");
@@ -146,7 +146,7 @@
     // Sistema de usuarios
     let users = JSON.parse(localStorage.getItem('wolfcore_users')) || {
       "lobo": { 
-        password: "wolf_alf26", // NUEVA CONTRASEÑA
+        password: "wolf_alf26",
         name: "Marcos Fernández", 
         role: "Director Fundador",
         level: "CEO",
@@ -233,43 +233,48 @@
         status: 'sent',
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       }).then(() => {
-        // ENVIAR EMAIL REAL
-        emailjs.send("service_wolf6oo", "wolfcore_liberty", {
+        // ENVIAR EMAIL REAL - MÉTODO CORRECTO
+        const templateParams = {
           to_email: email,
           user_name: name,
           username: username,
           password: password,
           login_link: 'https://wolfcore771-lb.github.io/wolfcore-liberty-version2/login.html'
-        }).then(() => {
-          // ENVIAR WHATSAPP REAL (ENLACE DIRECTO CON TU NÚMERO)
-          const message = `Hola ${name}, El Lobo (${'+543624143427'}) te ha invitado a WolfCore Liberty. Tu usuario: ${username} y contraseña: ${password}. Accede aquí: https://wolfcore771-lb.github.io/wolfcore-liberty-version2/login.html`;
-          const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-          window.open(whatsappUrl, '_blank');
+        };
 
-          // Guardar localmente
-          users[username] = {
-            password, name, 
-            role: role === 'TRADER' ? 'Trader' : role === 'PREMIUM' ? 'Miembro Premium' : 'Mentor',
-            level: role,
-            active: false,
-            lastActive: 0
-          };
-          saveUsers();
-          
-          alert(`✅ ¡Invitación enviada REAL!\n\nUsuario: ${username}\nContraseña: ${password}\n\nEmail enviado a: ${email}\nWhatsApp abierto para: +${phone}`);
-          
-          document.getElementById('newName').value = '';
-          document.getElementById('newEmail').value = '';
-          document.getElementById('newPhone').value = '';
-          
-          btn.textContent = 'Enviar Invitación REAL';
-          btn.disabled = false;
-        }).catch((emailError) => {
-          console.error('Error en EmailJS:', emailError);
-          alert('❌ Error al enviar email. Verifica tu template en EmailJS.');
-          btn.textContent = 'Enviar Invitación REAL';
-          btn.disabled = false;
-        });
+        emailjs.send("service_wolf6oo", "wolfcore_liberty", templateParams)
+          .then(function(response) {
+            console.log('Email enviado exitosamente!', response.status, response.text);
+            
+            // ENVIAR WHATSAPP REAL
+            const message = `Hola ${name}, El Lobo te ha invitado a WolfCore Liberty. Tu usuario: ${username} y contraseña: ${password}. Accede aquí: https://wolfcore771-lb.github.io/wolfcore-liberty-version2/login.html`;
+            const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+
+            // Guardar localmente
+            users[username] = {
+              password, name, 
+              role: role === 'TRADER' ? 'Trader' : role === 'PREMIUM' ? 'Miembro Premium' : 'Mentor',
+              level: role,
+              active: false,
+              lastActive: 0
+            };
+            saveUsers();
+            
+            alert(`✅ ¡Invitación enviada REAL!\n\nUsuario: ${username}\nContraseña: ${password}\n\nEmail enviado a: ${email}\nWhatsApp abierto para: +${phone}`);
+            
+            document.getElementById('newName').value = '';
+            document.getElementById('newEmail').value = '';
+            document.getElementById('newPhone').value = '';
+            
+            btn.textContent = 'Enviar Invitación REAL';
+            btn.disabled = false;
+          }, function(error) {
+            console.error('Error en EmailJS:', error);
+            alert('❌ Error al enviar email. Verifica tu template en EmailJS.');
+            btn.textContent = 'Enviar Invitación REAL';
+            btn.disabled = false;
+          });
       }).catch((firestoreError) => {
         console.error('Error en Firestore:', firestoreError);
         alert('❌ Error al guardar en Firestore. Verifica tus reglas.');
@@ -298,29 +303,36 @@
     function deleteUser(username) {
       if (!confirm(`¿Eliminar permanentemente a @${username}?`)) return;
       
-      // ELIMINAR CORRECTAMENTE DE FIRESTORE
-      db.collection('users').doc(username).get().then((doc) => {
-        if (!doc.exists) {
-          // Si no existe en Firestore, eliminar solo de localStorage
-          delete users[username];
-          saveUsers();
-          alert("✅ Usuario eliminado.");
-          return;
-        }
-        
-        // Eliminar el documento específico
-        doc.ref.delete().then(() => {
-          delete users[username];
-          saveUsers();
-          alert("✅ Usuario eliminado.");
-        }).catch((error) => {
-          console.error('Error al eliminar documento:', error);
+      // ELIMINAR POR USERNAME EN FIRESTORE
+      db.collection('users').where('username', '==', username).get()
+        .then((querySnapshot) => {
+          if (querySnapshot.empty) {
+            // Si no existe en Firestore, eliminar solo de localStorage
+            delete users[username];
+            saveUsers();
+            alert("✅ Usuario eliminado.");
+            return;
+          }
+          
+          // Eliminar todos los documentos encontrados
+          const deletePromises = [];
+          querySnapshot.forEach((doc) => {
+            deletePromises.push(doc.ref.delete());
+          });
+          
+          Promise.all(deletePromises).then(() => {
+            delete users[username];
+            saveUsers();
+            alert("✅ Usuario eliminado.");
+          }).catch((error) => {
+            console.error('Error al eliminar documentos:', error);
+            alert('❌ Error al eliminar usuario.');
+          });
+        })
+        .catch((error) => {
+          console.error('Error al buscar usuario:', error);
           alert('❌ Error al eliminar usuario.');
         });
-      }).catch((error) => {
-        console.error('Error al buscar usuario:', error);
-        alert('❌ Error al eliminar usuario.');
-      });
     }
 
     // Inicializar
