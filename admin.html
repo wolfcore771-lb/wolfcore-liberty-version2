@@ -231,53 +231,46 @@
         status: 'sent',
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       }).then(() => {
-        // ENVIAR EMAIL CON MANEJO DE ERRORES DETALLADO
-        const templateParams = {
+        // ENVIAR EMAIL - ¡TEMPLATE CORRECTO!
+        emailjs.send("service_wolf6oo", "wolfcore_liberty", {
           to_email: email,
           user_name: name,
           username: username,
           password: password,
           login_link: 'https://wolfcore771-lb.github.io/wolfcore-liberty-version2/login.html'
-        };
+        })
+        .then(function(response) {
+          console.log('✅ Email enviado exitosamente!', response);
+          
+          // ENVIAR WHATSAPP
+          const message = `Hola ${name}, El Lobo te ha invitado a WolfCore Liberty. Tu usuario: ${username} y contraseña: ${password}. Accede aquí: https://wolfcore771-lb.github.io/wolfcore-liberty-version2/login.html`;
+          window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
 
-        emailjs.send("service_wolf6oo", "wolfcore_liberty", templateParams)
-          .then(function(response) {
-            console.log('✅ Email enviado exitosamente!', response);
-            
-            // ENVIAR WHATSAPP
-            const message = `Hola ${name}, El Lobo te ha invitado a WolfCore Liberty. Tu usuario: ${username} y contraseña: ${password}. Accede aquí: https://wolfcore771-lb.github.io/wolfcore-liberty-version2/login.html`;
-            window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
-
-            // Guardar localmente
-            users[username] = {
-              password, name, 
-              role: role === 'TRADER' ? 'Trader' : role === 'PREMIUM' ? 'Miembro Premium' : 'Mentor',
-              level: role,
-              active: false,
-              lastActive: 0
-            };
-            saveUsers();
-            
-            alert(`✅ ¡Invitación enviada!\nUsuario: ${username}\nContraseña: ${password}`);
-            
-            // Limpiar formulario
-            document.getElementById('newName').value = '';
-            document.getElementById('newEmail').value = '';
-            document.getElementById('newPhone').value = '';
-            
-            btn.textContent = 'Enviar Invitación REAL';
-            btn.disabled = false;
-          }, function(error) {
-            console.error('❌ Error detallado de EmailJS:', error);
-            // MENSAJE ESPECÍFICO PARA DIAGNÓSTICO
-            alert('❌ ERROR EMAILJS:\n' + 
-                  '1. Verifica que tu template tenga las variables exactas\n' +
-                  '2. Asegúrate de que el email remitente esté verificado\n' +
-                  '3. Prueba el "Try It" en EmailJS Dashboard\n\n' +
-                  'Detalles técnicos en consola (F12)');
-            btn.textContent = 'Enviar Invitación REAL';
-            btn.disabled = false;
-          });
+          // Guardar localmente
+          users[username] = {
+            password, name, 
+            role: role === 'TRADER' ? 'Trader' : role === 'PREMIUM' ? 'Miembro Premium' : 'Mentor',
+            level: role,
+            active: false,
+            lastActive: 0
+          };
+          saveUsers();
+          
+          alert(`✅ ¡Invitación enviada!\nUsuario: ${username}\nContraseña: ${password}`);
+          
+          // Limpiar formulario
+          document.getElementById('newName').value = '';
+          document.getElementById('newEmail').value = '';
+          document.getElementById('newPhone').value = '';
+          
+          btn.textContent = 'Enviar Invitación REAL';
+          btn.disabled = false;
+        }, function(error) {
+          console.error('❌ Error EmailJS:', error);
+          alert('❌ Error al enviar email. Contacta al soporte técnico.');
+          btn.textContent = 'Enviar Invitación REAL';
+          btn.disabled = false;
+        });
       }).catch((error) => {
         console.error('❌ Error Firestore:', error);
         alert('❌ Error al guardar invitación.');
