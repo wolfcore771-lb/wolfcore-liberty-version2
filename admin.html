@@ -107,7 +107,7 @@
   </div>
 
   <!-- EmailJS -->
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   
   <!-- Firebase CDN (NO MODULAR) -->
   <script src="https://www.gstatic.com/firebasejs/12.8.0/firebase-app-compat.js"></script>
@@ -134,7 +134,7 @@
     const EMAILJS_PUBLIC_KEY = "6EBT7x4WdOSG96_XD";
     emailjs.init(EMAILJS_PUBLIC_KEY);
 
-    // Verificar acceso Lobo
+    // Verificar acceso Lobo (CON NUEVA CONTRASEÑA)
     const user = JSON.parse(localStorage.getItem('wolfcore_user'));
     if (!user || user.level !== 'CEO') {
       alert("❌ Acceso restringido al Lobo.");
@@ -146,7 +146,7 @@
     // Sistema de usuarios
     let users = JSON.parse(localStorage.getItem('wolfcore_users')) || {
       "lobo": { 
-        password: "wolfcore2026", 
+        password: "wolf_alf26", // NUEVA CONTRASEÑA
         name: "Marcos Fernández", 
         role: "Director Fundador",
         level: "CEO",
@@ -233,32 +233,16 @@
         status: 'sent',
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       }).then(() => {
-        // ENVIAR EMAIL REAL - PARÁMETROS CORRECTOS
-        const templateParams = {
-          service_id: "service_wolf6oo",
-          template_id: "wolfcore_liberty",
-          user_id: EMAILJS_PUBLIC_KEY,
-          template_params: {
-            to_email: email,
-            user_name: name,
-            username: username,
-            password: password,
-            login_link: 'https://wolfcore771-lb.github.io/wolfcore-liberty-version2/login.html'
-          }
-        };
-
-        // Método alternativo de EmailJS
+        // ENVIAR EMAIL REAL
         emailjs.send("service_wolf6oo", "wolfcore_liberty", {
           to_email: email,
           user_name: name,
           username: username,
           password: password,
           login_link: 'https://wolfcore771-lb.github.io/wolfcore-liberty-version2/login.html'
-        }).then(function(response) {
-          console.log('Email enviado exitosamente!', response.status, response.text);
-          
-          // ENVIAR WHATSAPP REAL
-          const message = `Hola ${name}, El Lobo te ha invitado a WolfCore Liberty. Tu usuario: ${username} y contraseña: ${password}. Accede aquí: https://wolfcore771-lb.github.io/wolfcore-liberty-version2/login.html`;
+        }).then(() => {
+          // ENVIAR WHATSAPP REAL (ENLACE DIRECTO CON TU NÚMERO)
+          const message = `Hola ${name}, El Lobo (${'+543624143427'}) te ha invitado a WolfCore Liberty. Tu usuario: ${username} y contraseña: ${password}. Accede aquí: https://wolfcore771-lb.github.io/wolfcore-liberty-version2/login.html`;
           const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
           window.open(whatsappUrl, '_blank');
 
@@ -280,8 +264,8 @@
           
           btn.textContent = 'Enviar Invitación REAL';
           btn.disabled = false;
-        }, function(error) {
-          console.error('Error en EmailJS:', error);
+        }).catch((emailError) => {
+          console.error('Error en EmailJS:', emailError);
           alert('❌ Error al enviar email. Verifica tu template en EmailJS.');
           btn.textContent = 'Enviar Invitación REAL';
           btn.disabled = false;
@@ -314,15 +298,27 @@
     function deleteUser(username) {
       if (!confirm(`¿Eliminar permanentemente a @${username}?`)) return;
       
-      db.collection('users').where('username', '==', username).get().then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          doc.ref.delete();
+      // ELIMINAR CORRECTAMENTE DE FIRESTORE
+      db.collection('users').doc(username).get().then((doc) => {
+        if (!doc.exists) {
+          // Si no existe en Firestore, eliminar solo de localStorage
+          delete users[username];
+          saveUsers();
+          alert("✅ Usuario eliminado.");
+          return;
+        }
+        
+        // Eliminar el documento específico
+        doc.ref.delete().then(() => {
+          delete users[username];
+          saveUsers();
+          alert("✅ Usuario eliminado.");
+        }).catch((error) => {
+          console.error('Error al eliminar documento:', error);
+          alert('❌ Error al eliminar usuario.');
         });
-        delete users[username];
-        saveUsers();
-        alert("✅ Usuario eliminado.");
       }).catch((error) => {
-        console.error('Error al eliminar:', error);
+        console.error('Error al buscar usuario:', error);
         alert('❌ Error al eliminar usuario.');
       });
     }
