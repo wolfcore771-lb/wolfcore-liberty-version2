@@ -109,7 +109,7 @@
   <!-- EmailJS -->
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   
-  <!-- Firebase CDN (NO MODULAR) -->
+  <!-- Firebase CDN -->
   <script src="https://www.gstatic.com/firebasejs/12.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore-compat.js"></script>
   
@@ -127,8 +127,6 @@
     // Inicializar Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
-
-    console.log("✅ Firebase inicializado correctamente");
 
     // Inicializar EmailJS
     const EMAILJS_PUBLIC_KEY = "6EBT7x4WdOSG96_XD";
@@ -225,7 +223,7 @@
       const username = email.split('@')[0].toLowerCase().replace(/\./g, '_');
       const password = generateSimplePassword();
 
-      // Guardar en Firestore PRIMERO
+      // Guardar en Firestore
       db.collection('invitations').add({
         name, email, phone, role,
         username, password,
@@ -233,51 +231,49 @@
         status: 'sent',
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       }).then(() => {
-        // ENVIAR EMAIL REAL - MÉTODO CORRECTO
-        const templateParams = {
+        // ENVIAR EMAIL - MÉTODO SIMPLE Y DIRECTO
+        emailjs.send("service_wolf6oo", "wolfcore_liberty", {
           to_email: email,
           user_name: name,
           username: username,
           password: password,
           login_link: 'https://wolfcore771-lb.github.io/wolfcore-liberty-version2/login.html'
-        };
+        })
+        .then(function(response) {
+          console.log('Email enviado:', response.status, response.text);
+          
+          // ENVIAR WHATSAPP
+          const message = `Hola ${name}, El Lobo te ha invitado a WolfCore Liberty. Tu usuario: ${username} y contraseña: ${password}. Accede aquí: https://wolfcore771-lb.github.io/wolfcore-liberty-version2/login.html`;
+          window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
 
-        emailjs.send("service_wolf6oo", "wolfcore_liberty", templateParams)
-          .then(function(response) {
-            console.log('Email enviado exitosamente!', response.status, response.text);
-            
-            // ENVIAR WHATSAPP REAL
-            const message = `Hola ${name}, El Lobo te ha invitado a WolfCore Liberty. Tu usuario: ${username} y contraseña: ${password}. Accede aquí: https://wolfcore771-lb.github.io/wolfcore-liberty-version2/login.html`;
-            const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-            window.open(whatsappUrl, '_blank');
-
-            // Guardar localmente
-            users[username] = {
-              password, name, 
-              role: role === 'TRADER' ? 'Trader' : role === 'PREMIUM' ? 'Miembro Premium' : 'Mentor',
-              level: role,
-              active: false,
-              lastActive: 0
-            };
-            saveUsers();
-            
-            alert(`✅ ¡Invitación enviada REAL!\n\nUsuario: ${username}\nContraseña: ${password}\n\nEmail enviado a: ${email}\nWhatsApp abierto para: +${phone}`);
-            
-            document.getElementById('newName').value = '';
-            document.getElementById('newEmail').value = '';
-            document.getElementById('newPhone').value = '';
-            
-            btn.textContent = 'Enviar Invitación REAL';
-            btn.disabled = false;
-          }, function(error) {
-            console.error('Error en EmailJS:', error);
-            alert('❌ Error al enviar email. Verifica tu template en EmailJS.');
-            btn.textContent = 'Enviar Invitación REAL';
-            btn.disabled = false;
-          });
-      }).catch((firestoreError) => {
-        console.error('Error en Firestore:', firestoreError);
-        alert('❌ Error al guardar en Firestore. Verifica tus reglas.');
+          // Guardar localmente
+          users[username] = {
+            password, name, 
+            role: role === 'TRADER' ? 'Trader' : role === 'PREMIUM' ? 'Miembro Premium' : 'Mentor',
+            level: role,
+            active: false,
+            lastActive: 0
+          };
+          saveUsers();
+          
+          alert(`✅ ¡Invitación enviada!\nUsuario: ${username}\nContraseña: ${password}`);
+          
+          // Limpiar formulario
+          document.getElementById('newName').value = '';
+          document.getElementById('newEmail').value = '';
+          document.getElementById('newPhone').value = '';
+          
+          btn.textContent = 'Enviar Invitación REAL';
+          btn.disabled = false;
+        }, function(error) {
+          console.error('Error EmailJS:', error);
+          alert('❌ Error al enviar email. Contacta al soporte técnico.');
+          btn.textContent = 'Enviar Invitación REAL';
+          btn.disabled = false;
+        });
+      }).catch((error) => {
+        console.error('Error Firestore:', error);
+        alert('❌ Error al guardar invitación.');
         btn.textContent = 'Enviar Invitación REAL';
         btn.disabled = false;
       });
@@ -301,38 +297,12 @@
     }
 
     function deleteUser(username) {
-      if (!confirm(`¿Eliminar permanentemente a @${username}?`)) return;
+      if (!confirm(`¿Eliminar a @${username}?`)) return;
       
-      // ELIMINAR POR USERNAME EN FIRESTORE
-      db.collection('users').where('username', '==', username).get()
-        .then((querySnapshot) => {
-          if (querySnapshot.empty) {
-            // Si no existe en Firestore, eliminar solo de localStorage
-            delete users[username];
-            saveUsers();
-            alert("✅ Usuario eliminado.");
-            return;
-          }
-          
-          // Eliminar todos los documentos encontrados
-          const deletePromises = [];
-          querySnapshot.forEach((doc) => {
-            deletePromises.push(doc.ref.delete());
-          });
-          
-          Promise.all(deletePromises).then(() => {
-            delete users[username];
-            saveUsers();
-            alert("✅ Usuario eliminado.");
-          }).catch((error) => {
-            console.error('Error al eliminar documentos:', error);
-            alert('❌ Error al eliminar usuario.');
-          });
-        })
-        .catch((error) => {
-          console.error('Error al buscar usuario:', error);
-          alert('❌ Error al eliminar usuario.');
-        });
+      // ELIMINAR DE LOCALSTORAGE (no necesitas Firestore para esto)
+      delete users[username];
+      saveUsers();
+      alert("✅ Usuario eliminado.");
     }
 
     // Inicializar
