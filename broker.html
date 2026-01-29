@@ -7,46 +7,75 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #0a0a0a; color: #fff; font-family: 'Inter', sans-serif; }
-    header { background: rgba(10,10,10,0.95); padding: 1rem 2rem; position: fixed; top: 0; width: 100%; z-index: 100; border-bottom: 1px solid #1e3a5f; display: flex; justify-content: space-between; align-items: center; }
+    body { background: #0a0a0a; color: #fff; font-family: 'Inter', sans-serif; overflow: hidden; }
+    header { 
+      background: rgba(10,10,10,0.95); 
+      padding: 1rem 2rem; 
+      position: fixed; 
+      top: 0; 
+      width: 100%; 
+      z-index: 100; 
+      border-bottom: 1px solid #1e3a5f; 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+    }
     .logo-container { display: flex; align-items: center; gap: 1rem; }
     .logo { width: 40px; height: 40px; }
-    nav a { color: #cbd5e1; text-decoration: none; font-weight: 500; }
-    .back-link { background: rgba(11,26,58,0.7); color: white; padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; border: 1px solid #1e3a5f; }
-    main { padding: 80px 0 0; min-height: 100vh; }
-    .trading-header { padding: 2rem; text-align: center; }
-    .trading-header h1 { font-size: 2.2rem; background: linear-gradient(to right, #ffffff, #c0d0ff); -webkit-background-clip: text; background-clip: text; color: transparent; margin-bottom: 1rem; }
-    .trading-header p { color: #cbd5e1; font-size: 1.1rem; max-width: 800px; margin: 0 auto; }
-    .trading-container { width: 100%; height: calc(100vh - 200px); }
-    footer { background: rgba(10,10,10,0.98); padding: 2rem; text-align: center; margin-top: 2rem; border-top: 1px solid #1e3a5f; font-size: 0.9rem; }
-    
-    /* Panel de control para activos */
-    .assets-panel {
+    .back-link { 
+      background: rgba(11,26,58,0.7); 
+      color: white; 
+      padding: 0.5rem 1rem; 
+      border-radius: 6px; 
+      text-decoration: none; 
+      border: 1px solid #1e3a5f; 
+      font-weight: 500;
+    }
+    main { 
+      padding-top: 80px; 
+      height: calc(100vh - 80px);
+      width: 100%;
+    }
+    .trading-header { 
+      padding: 1.5rem 2rem; 
+      text-align: center; 
       background: rgba(15,15,25,0.8);
-      padding: 1.5rem;
-      margin: 0 2rem 2rem;
-      border-radius: 12px;
-      border: 1px solid #1e3a5f;
+      border-bottom: 1px solid #1e3a5f;
     }
-    .assets-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 1rem;
-      margin-top: 1rem;
+    .trading-header h1 { 
+      font-size: 1.8rem; 
+      background: linear-gradient(to right, #ffffff, #c0d0ff); 
+      -webkit-background-clip: text; 
+      background-clip: text; 
+      color: transparent; 
+      margin-bottom: 0.5rem; 
     }
-    .asset-btn {
-      background: rgba(11,26,58,0.5);
-      border: 1px solid #1e3a5f;
-      color: white;
-      padding: 0.5rem;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      font-size: 0.9rem;
+    .trading-header p { 
+      color: #cbd5e1; 
+      font-size: 1rem; 
+      max-width: 800px; 
+      margin: 0 auto; 
     }
-    .asset-btn:hover {
-      background: rgba(22,163,74,0.3);
-      transform: translateY(-1px);
+    .trading-container { 
+      width: 100%; 
+      height: calc(100% - 120px); 
+      background: #0f0f1a;
+    }
+    footer { 
+      background: rgba(10,10,10,0.98); 
+      padding: 1rem; 
+      text-align: center; 
+      font-size: 0.85rem; 
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      border-top: 1px solid #1e3a5f;
+    }
+    
+    /* Estilo para el widget de TradingView */
+    #tradingview_1234 {
+      width: 100%;
+      height: 100%;
     }
   </style>
 </head>
@@ -63,36 +92,17 @@
   <main>
     <div class="trading-header">
       <h1>Plataforma de Trading Profesional</h1>
-      <p>Accede a nuestra plataforma de trading tipo TradingView con múltiples activos financieros en tiempo real, indicadores avanzados y herramientas de análisis técnico profesional.</p>
-    </div>
-    
-    <!-- Panel de activos rápidos -->
-    <div class="assets-panel">
-      <h3 style="color: #10b981; margin-bottom: 1rem;">Activos Populares</h3>
-      <div class="assets-grid">
-        <button class="asset-btn" onclick="changeSymbol('FX_IDC:EURUSD')">EUR/USD</button>
-        <button class="asset-btn" onclick="changeSymbol('FX_IDC:GBPUSD')">GBP/USD</button>
-        <button class="asset-btn" onclick="changeSymbol('FX_IDC:USDJPY')">USD/JPY</button>
-        <button class="asset-btn" onclick="changeSymbol('BINANCE:BTCUSDT')">BTC/USD</button>
-        <button class="asset-btn" onclick="changeSymbol('BINANCE:ETHUSDT')">ETH/USD</button>
-        <button class="asset-btn" onclick="changeSymbol('FX_IDC:USDARS')">USD/ARS</button>
-        <button class="asset-btn" onclick="changeSymbol('NASDAQ:AAPL')">AAPL</button>
-        <button class="asset-btn" onclick="changeSymbol('NASDAQ:TSLA')">TSLA</button>
-      </div>
+      <p>Gráficos en tiempo real con herramientas de análisis técnico avanzado. Usa la barra de búsqueda integrada en el gráfico para seleccionar cualquier activo financiero.</p>
     </div>
     
     <div class="trading-container">
-      <!-- TradingView Widget BEGIN -->
-      <div class="tradingview-widget-container">
-        <div id="tradingview_1234"></div>
-      </div>
-      <!-- TradingView Widget END -->
+      <div id="tradingview_1234"></div>
     </div>
   </main>
 
   <footer>
     <p>© 2026 WolfCore Liberty — Institución Privada del Lobo</p>
-    <p>Plataforma de Trading Profesional en Tiempo Real</p>
+    <p>TradingView Integration — Datos en Tiempo Real</p>
   </footer>
 
   <!-- TradingView Script -->
@@ -106,18 +116,11 @@
       window.location.href = "login.html";
     }
 
-    // Variable global para el widget
-    let tradingWidget = null;
-
-    // Inicializar TradingView
-    function initTradingView(symbol = "FX_IDC:EURUSD") {
-      if (tradingWidget) {
-        tradingWidget.remove();
-      }
-      
-      tradingWidget = new TradingView.widget({
+    // Inicializar TradingView SIN popup
+    document.addEventListener('DOMContentLoaded', function() {
+      new TradingView.widget({
         "autosize": true,
-        "symbol": symbol,
+        "symbol": "FX_IDC:EURUSD", // Activo predeterminado
         "interval": "D",
         "timezone": "America/Argentina/Buenos_Aires",
         "theme": "dark",
@@ -128,20 +131,9 @@
         "allow_symbol_change": true,
         "container_id": "tradingview_1234",
         "studies": ["RSI@tv-basicstudies", "MACD@tv-basicstudies"],
-        "show_popup_button": true,
-        "popup_width": "1000",
-        "popup_height": "650"
+        "show_popup_button": false, // ¡NO abre en popup!
+        "support_host": "https://www.tradingview.com"
       });
-    }
-
-    // Cambiar símbolo desde los botones
-    function changeSymbol(symbol) {
-      initTradingView(symbol);
-    }
-
-    // Inicializar al cargar
-    document.addEventListener('DOMContentLoaded', function() {
-      initTradingView("FX_IDC:EURUSD");
     });
   </script>
 
