@@ -231,9 +231,9 @@
         status: 'sent',
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       }).then(() => {
-        // ENVIAR EMAIL AL DESTINATARIO (NO AL CEO)
+        // ENVIAR EMAIL AL DESTINATARIO
         emailjs.send("service_wolf6oo", "wolfcore_liberty", {
-          to_email: email, // ¡EMAIL DEL DESTINATARIO!
+          to_email: email,
           user_name: name,
           username: username,
           password: password,
@@ -243,13 +243,12 @@
           const message = `Hola ${name}, El Lobo te ha invitado a WolfCore Liberty. Tu usuario: ${username} y contraseña: ${password}. Accede aquí: https://wolfcore771-lb.github.io/wolfcore-liberty-version2/login.html`;
           window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
 
-          // Guardar localmente
+          // GUARDAR EN LOCALSTORAGE PARA QUE PUEDA INICIAR SESIÓN
           users[username] = {
-            password, name, 
+            password: password,
+            name: name,
             role: role === 'TRADER' ? 'Trader' : role === 'PREMIUM' ? 'Miembro Premium' : 'Mentor',
-            level: role,
-            active: false,
-            lastActive: 0
+            level: role
           };
           saveUsers();
           

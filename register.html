@@ -143,14 +143,19 @@
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
 
-        // Guardar en localStorage PARA LOGIN INMEDIATO
+        // GUARDAR EN LOCALSTORAGE PARA LOGIN INMEDIATO
         let users = JSON.parse(localStorage.getItem('wolfcore_users')) || {};
-        users[username] = { password, name: fullName, role: 'Miembro', level: 'TRADER' };
+        users[username] = {
+          password: password,
+          name: fullName,
+          role: 'Miembro',
+          level: 'TRADER'
+        };
         localStorage.setItem('wolfcore_users', JSON.stringify(users));
 
-        // Enviar email al USUARIO (no al CEO)
+        // Enviar email al usuario
         emailjs.send("service_wolf6oo", "wolfcore_liberty", {
-          to_email: email, // ¡ESTE ES EL EMAIL DEL USUARIO!
+          to_email: email,
           user_name: fullName,
           username: username,
           password: password,
@@ -163,7 +168,10 @@
         
         // ACCESO DIRECTO A PLATAFORMA
         localStorage.setItem('wolfcore_user', JSON.stringify({
-          username, name: fullName, role: 'Miembro', level: 'TRADER'
+          username: username,
+          name: fullName,
+          role: 'Miembro',
+          level: 'TRADER'
         }));
         
         btn.textContent = 'Crear Cuenta y Acceder';
