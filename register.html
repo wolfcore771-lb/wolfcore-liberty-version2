@@ -84,7 +84,7 @@
   <!-- EmailJS -->
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   
-  <!-- Firebase CDN (NO MODULAR) -->
+  <!-- Firebase CDN -->
   <script src="https://www.gstatic.com/firebasejs/12.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore-compat.js"></script>
   
@@ -102,8 +102,6 @@
     // Inicializar Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
-
-    console.log("✅ Firebase inicializado correctamente");
 
     // Inicializar EmailJS
     const EMAILJS_PUBLIC_KEY = "6EBT7x4WdOSG96_XD";
@@ -143,37 +141,36 @@
           username, fullName, email, phone, experience, motivation,
           role: 'Miembro', level: 'TRADER', password, active: true,
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        }).then(() => {
-          // Guardar localmente
-          let users = JSON.parse(localStorage.getItem('wolfcore_users')) || {};
-          users[username] = { password, name: fullName, role: 'Miembro', level: 'TRADER' };
-          localStorage.setItem('wolfcore_users', JSON.stringify(users));
-
-          // Enviar email
-          emailjs.send("service_wolf6oo", "wolfcore_liberty", {
-            to_email: email,
-            user_name: fullName,
-            username: username,
-            password: password,
-            login_link: 'https://wolfcore771-lb.github.io/wolfcore-liberty-version2/login.html'
-          }).then(() => {
-            console.log('Email enviado');
-          }).catch((error) => {
-            console.warn('Email falló:', error);
-          });
-          
-          // ACCESO DIRECTO A PLATAFORMA
-          localStorage.setItem('wolfcore_user', JSON.stringify({
-            username, name: fullName, role: 'Miembro', level: 'TRADER'
-          }));
-          
-          alert(`✅ ¡Cuenta creada!\n\nUsuario: ${username}\nContraseña: ${password}`);
-          
-          btn.textContent = 'Crear Cuenta y Acceder';
-          btn.disabled = false;
-          
-          window.location.href = 'platform.html';
         });
+
+        // Guardar en localStorage PARA LOGIN INMEDIATO
+        let users = JSON.parse(localStorage.getItem('wolfcore_users')) || {};
+        users[username] = { password, name: fullName, role: 'Miembro', level: 'TRADER' };
+        localStorage.setItem('wolfcore_users', JSON.stringify(users));
+
+        // Enviar email al USUARIO (no al CEO)
+        emailjs.send("service_wolf6oo", "wolfcore_liberty", {
+          to_email: email, // ¡ESTE ES EL EMAIL DEL USUARIO!
+          user_name: fullName,
+          username: username,
+          password: password,
+          login_link: 'https://wolfcore771-lb.github.io/wolfcore-liberty-version2/login.html'
+        }).then(() => {
+          console.log('Email enviado al usuario');
+        }).catch((error) => {
+          console.warn('Email falló:', error);
+        });
+        
+        // ACCESO DIRECTO A PLATAFORMA
+        localStorage.setItem('wolfcore_user', JSON.stringify({
+          username, name: fullName, role: 'Miembro', level: 'TRADER'
+        }));
+        
+        btn.textContent = 'Crear Cuenta y Acceder';
+        btn.disabled = false;
+        
+        window.location.href = 'platform.html';
+        
       } catch (error) {
         console.error('Error:', error);
         const btn = document.querySelector('.register-btn');

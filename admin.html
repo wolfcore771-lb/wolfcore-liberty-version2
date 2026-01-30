@@ -231,18 +231,15 @@
         status: 'sent',
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       }).then(() => {
-        // ENVIAR EMAIL - ¡TEMPLATE CORRECTO!
+        // ENVIAR EMAIL AL DESTINATARIO (NO AL CEO)
         emailjs.send("service_wolf6oo", "wolfcore_liberty", {
-          to_email: email,
+          to_email: email, // ¡EMAIL DEL DESTINATARIO!
           user_name: name,
           username: username,
           password: password,
           login_link: 'https://wolfcore771-lb.github.io/wolfcore-liberty-version2/login.html'
-        })
-        .then(function(response) {
-          console.log('✅ Email enviado exitosamente!', response);
-          
-          // ENVIAR WHATSAPP
+        }).then(() => {
+          // ENVIAR WHATSAPP AL DESTINATARIO
           const message = `Hola ${name}, El Lobo te ha invitado a WolfCore Liberty. Tu usuario: ${username} y contraseña: ${password}. Accede aquí: https://wolfcore771-lb.github.io/wolfcore-liberty-version2/login.html`;
           window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
 
@@ -256,7 +253,7 @@
           };
           saveUsers();
           
-          alert(`✅ ¡Invitación enviada!\nUsuario: ${username}\nContraseña: ${password}`);
+          alert(`✅ ¡Invitación enviada REAL!\nUsuario: ${username}\nContraseña: ${password}`);
           
           // Limpiar formulario
           document.getElementById('newName').value = '';
@@ -266,13 +263,13 @@
           btn.textContent = 'Enviar Invitación REAL';
           btn.disabled = false;
         }, function(error) {
-          console.error('❌ Error EmailJS:', error);
-          alert('❌ Error al enviar email. Contacta al soporte técnico.');
+          console.error('Error EmailJS:', error);
+          alert('❌ Error al enviar email.');
           btn.textContent = 'Enviar Invitación REAL';
           btn.disabled = false;
         });
       }).catch((error) => {
-        console.error('❌ Error Firestore:', error);
+        console.error('Error Firestore:', error);
         alert('❌ Error al guardar invitación.');
         btn.textContent = 'Enviar Invitación REAL';
         btn.disabled = false;
